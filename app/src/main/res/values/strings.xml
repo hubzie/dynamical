@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Dynamical</string>
 
-    <string name="placeholder">Placeholder</string>
+    <string name="placeholder">There will be something here soon!</string>
 
     <string name="route_list_title">Route List</string>
     <string name="new_track_title">New Track</string>
