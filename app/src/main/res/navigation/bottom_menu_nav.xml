@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottom_menu"
+    app:startDestination="@id/new_track_fragment">
+
+    <fragment
+        android:id="@+id/route_list_fragment"
+        android:name="com.example.dynamical.SettingsFragment"
+        android:label="@string/route_list_title"
+        tools:layout="@layout/route_list_fragment" />
+    <fragment
+        android:id="@+id/new_track_fragment"
+        android:name="com.example.dynamical.NewTrackFragment"
+        android:label="@string/new_track_title"
+        tools:layout="@layout/new_track_fragment" />
+    <fragment
+        android:id="@+id/settings_fragment"
+        android:name="com.example.dynamical.RouteListFragment"
+        android:label="@string/settings_title"
+        tools:layout="@layout/settings_fragment" />
+</navigation>
