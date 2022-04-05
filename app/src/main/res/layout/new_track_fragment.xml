@@ -7,7 +7,7 @@
     tools:context=".NewTrackFragment">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/start"
+        android:id="@+id/action_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
@@ -48,10 +48,10 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:textSize="@dimen/title_size"
-                android:text="@string/timer_title"/>
+                android:text="@string/stopwatch_title"/>
 
             <TextView
-                android:id="@+id/timer_text_view"
+                android:id="@+id/time_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
