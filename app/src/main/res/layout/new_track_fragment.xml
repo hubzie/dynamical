@@ -6,35 +6,82 @@
     android:layout_height="match_parent"
     tools:context=".NewTrackFragment">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:src="@drawable/ic_baseline_play_arrow_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
+        app:layout_constraintTop_toBottomOf="@id/map_fragment_container"
+        app:layout_constraintBottom_toBottomOf="@id/map_fragment_container"
+        tools:ignore="ContentDescription" />
 
-        <androidx.fragment.app.FragmentContainerView
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/map_preview_height"
-            android:id="@+id/map_fragment_container"
-            android:name="com.example.dynamical.MapFragment"/>
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/map_fragment_container"
+        android:name="com.example.dynamical.MapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/map_preview_height"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/placeholder"
-            android:background="@android:color/holo_red_light" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/map_fragment_container"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:padding="@dimen/margin" >
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/placeholder" />
+        <LinearLayout
+            android:id="@+id/time_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/step_counter_layout"
+            android:layout_marginEnd="@dimen/margin" >
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/placeholder" />
-    </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="@dimen/title_size"
+                android:text="@string/timer_title"/>
+
+            <TextView
+                android:id="@+id/timer_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="@dimen/value_size"
+                android:text="@string/placeholder" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/step_counter_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintStart_toEndOf="@id/time_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="@dimen/margin" >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="@dimen/title_size"
+                android:text="@string/step_counter_title" />
+
+            <TextView
+                android:id="@+id/step_count_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="@dimen/value_size"
+                android:text="@string/placeholder" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

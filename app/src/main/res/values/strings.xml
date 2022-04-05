@@ -6,4 +6,7 @@
     <string name="route_list_title">Route List</string>
     <string name="new_track_title">New Track</string>
     <string name="settings_title">Settings</string>
+
+    <string name="timer_title">Time</string>
+    <string name="step_counter_title">Steps</string>
 </resources>
