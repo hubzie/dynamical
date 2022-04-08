@@ -4,4 +4,9 @@
     <dimen name="title_size">30sp</dimen>
     <dimen name="margin">5dp</dimen>
     <dimen name="value_size">24sp</dimen>
+    <dimen name="item_map_preview">150dp</dimen>
+
+    <dimen name="item_corner_radius">10dp</dimen>
+    <dimen name="item_border_width">1dp</dimen>
+    <dimen name="subtext_size">15sp</dimen>
 </resources>

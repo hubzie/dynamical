@@ -1,22 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/round_outline">
 
-    <ImageView
-        android:id="@+id/imageView"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@drawable/ic_launcher_background"
-        android:foreground="@drawable/ic_launcher_foreground"
-        android:contentDescription="@string/placeholder" />
+        android:layout_height="@dimen/item_map_preview">
+
+        <ProgressBar
+            android:id="@+id/progress"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            map:layout_constraintTop_toTopOf="parent"
+            map:layout_constraintBottom_toBottomOf="parent" />
+
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/map_item_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            map:liteMode="true"
+            map:mapType="none"
+            android:visibility="gone" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/caption"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/placeholder"
-        android:background="@android:color/holo_red_light"/>
+        android:textSize="@dimen/subtext_size"/>
+
 </LinearLayout>
