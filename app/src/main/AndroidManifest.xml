@@ -27,7 +27,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".routelist.RouteDetailsActivity"
-            android:exported="false" />
+        <activity
+            android:name=".routelist.RouteDetailsActivity"
+            android:exported="false"></activity>
     </application>
 </manifest>

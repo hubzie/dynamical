@@ -21,8 +21,7 @@ class RouteAdapter : ListAdapter<Route, RouteAdapter.ViewHolder>(RouteDiff()) {
     inner class ViewHolder(view: View) :
         RecyclerView.ViewHolder(view),
         OnMapReadyCallback,
-        View.OnClickListener
-    {
+        View.OnClickListener {
         private val process: ProgressBar = view.findViewById(R.id.progress)
         private val mapView: MapView = view.findViewById(R.id.map_item_preview)
         private val text: TextView = view.findViewById(R.id.caption)

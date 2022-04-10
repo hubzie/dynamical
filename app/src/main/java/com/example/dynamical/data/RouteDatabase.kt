@@ -37,7 +37,7 @@ abstract class RouteDatabase : RoomDatabase() {
 
     private class DatabaseCallback(
         private val scope: CoroutineScope
-    ): RoomDatabase.Callback() {
+    ) : RoomDatabase.Callback() {
         override fun onCreate(db: SupportSQLiteDatabase) {
             super.onCreate(db)
             INSTANCE?.let { database ->
@@ -58,7 +58,7 @@ abstract class RouteDatabase : RoomDatabase() {
                 Route(4, 4040, LatLng(52.409538, 16.931992)), // Poznań
                 Route(5, 9999, LatLng(54.372158, 18.638306)), // Gdańsk
                 Route(6, 1010, LatLng(50.041187, 21.999121)), // Rzeszów
-            ).forEach{ route -> routeDao.insertRoute(route) }
+            ).forEach { route -> routeDao.insertRoute(route) }
         }
     }
 }

@@ -4,7 +4,7 @@ import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 
-class GridSpacingDecoration(private val columnOffset: Int, private val rowOffset : Int) :
+class GridSpacingDecoration(private val columnOffset: Int, private val rowOffset: Int) :
     RecyclerView.ItemDecoration() {
 
     override fun getItemOffsets(
@@ -15,10 +15,10 @@ class GridSpacingDecoration(private val columnOffset: Int, private val rowOffset
     ) {
         super.getItemOffsets(outRect, view, parent, state)
         with(outRect) {
-            left = columnOffset/2
-            right = columnOffset/2
-            top = rowOffset/2
-            bottom = rowOffset/2
+            left = columnOffset / 2
+            right = columnOffset / 2
+            top = rowOffset / 2
+            bottom = rowOffset / 2
         }
     }
 }

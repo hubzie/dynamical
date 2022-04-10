@@ -7,7 +7,8 @@ import android.hardware.SensorManager
 
 class SensorHandler(private val sensorManager: SensorManager) : SensorEventListener {
     private var action: ((Int) -> Unit)? = null
-    private val stepCounterSensor: Sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)!!
+    private val stepCounterSensor: Sensor =
+        sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)!!
 
     private var startStep: Int? = null
     private var lastStep: Int = 0

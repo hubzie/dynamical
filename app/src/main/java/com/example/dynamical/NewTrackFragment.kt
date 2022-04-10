@@ -3,7 +3,6 @@ package com.example.dynamical
 import android.content.Context
 import android.hardware.SensorManager
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,7 +40,8 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment) {
         savedInstanceState: Bundle?
     ): View {
         _binding = NewTrackFragmentBinding.inflate(layoutInflater, container, false)
-        _sensorHandler = SensorHandler(requireActivity().getSystemService(Context.SENSOR_SERVICE) as SensorManager)
+        _sensorHandler =
+            SensorHandler(requireActivity().getSystemService(Context.SENSOR_SERVICE) as SensorManager)
         stopwatch.reset()
 
         sensorHandler.setOnChangeAction { binding.stepCountTextView.text = "$it" }
@@ -53,7 +53,7 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment) {
         }
 
         val mapFragment = MapFragment()
-        mapFragment.position =  LatLng(50.049683, 19.944544)
+        mapFragment.position = LatLng(50.049683, 19.944544)
         with(requireActivity().supportFragmentManager.beginTransaction()) {
             replace(R.id.map_fragment_container, mapFragment)
             commit()
