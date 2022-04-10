@@ -20,7 +20,6 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/map_fragment_container"
-        android:name="com.example.dynamical.MapFragment"
         android:layout_width="match_parent"
         android:layout_height="@dimen/map_preview_height"
         app:layout_constraintTop_toTopOf="parent" />

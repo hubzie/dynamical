@@ -3,11 +3,13 @@ package com.example.dynamical
 import android.content.Context
 import android.hardware.SensorManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.dynamical.databinding.NewTrackFragmentBinding
+import com.google.android.gms.maps.model.LatLng
 
 class NewTrackFragment : Fragment(R.layout.new_track_fragment) {
     private var _binding: NewTrackFragmentBinding? = null
@@ -48,6 +50,13 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment) {
         binding.actionButton.setOnClickListener {
             if (!isRunning) start()
             else stop()
+        }
+
+        val mapFragment = MapFragment()
+        mapFragment.position =  LatLng(50.049683, 19.944544)
+        with(requireActivity().supportFragmentManager.beginTransaction()) {
+            replace(R.id.map_fragment_container, mapFragment)
+            commit()
         }
 
         return binding.root

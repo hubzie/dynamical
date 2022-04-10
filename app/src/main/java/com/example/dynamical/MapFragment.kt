@@ -15,6 +15,14 @@ import com.google.android.gms.maps.model.LatLng
 class MapFragment : Fragment(R.layout.map_fragment), OnMapReadyCallback {
     private var _binding: MapFragmentBinding? = null
     private val binding get() = _binding!!
+    private lateinit var map: GoogleMap
+    private var _position = LatLng(0.0, 0.0)
+    var position: LatLng
+        get() = _position
+        set(value) {
+            _position = value
+            updatePosition()
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,9 +42,16 @@ class MapFragment : Fragment(R.layout.map_fragment), OnMapReadyCallback {
         _binding = null
     }
 
-    override fun onMapReady(map: GoogleMap) {
-        map.moveCamera(CameraUpdateFactory
-            .newLatLngZoom(LatLng(50.049683, 19.944544), 10f)
-        )
+    private fun updatePosition() {
+        if (!::map.isInitialized) return
+        with(map) {
+            moveCamera(CameraUpdateFactory.newLatLngZoom(position, 10f))
+            mapType = GoogleMap.MAP_TYPE_NORMAL
+        }
+    }
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        map = googleMap
+        updatePosition()
     }
 }

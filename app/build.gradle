@@ -59,4 +59,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$livecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$livecycle_version"
     implementation "androidx.lifecycle:lifecycle-common-java8:$livecycle_version"
+
+    implementation 'androidx.fragment:fragment-ktx:1.4.1'
 }

@@ -9,4 +9,6 @@
 
     <string name="stopwatch_title">Time</string>
     <string name="step_counter_title">Steps</string>
+
+    <string name="EXTRA_ROUTE_ID">com.example.dynamical.extra.ROUTE_ID</string>
 </resources>
