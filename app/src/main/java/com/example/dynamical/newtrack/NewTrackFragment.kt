@@ -1,18 +1,14 @@
 package com.example.dynamical.newtrack
 
-import android.content.Context
-import android.hardware.SensorManager
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.dynamical.DynamicalApplication
 import com.example.dynamical.MapFragment
 import com.example.dynamical.R
 import com.example.dynamical.databinding.NewTrackFragmentBinding
-import com.example.dynamical.mesure.StepCounter
-import com.example.dynamical.mesure.Stopwatch
 import com.google.android.gms.maps.model.LatLng
 
 class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
@@ -21,7 +17,8 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
     private val binding get() = _binding!!
 
     // NewTrackPresenter
-    private val presenter = NewTrackPresenter(this)
+    private var _presenter: NewTrackPresenter? = null
+    private val presenter get() = _presenter!!
 
     // Interface implementation
     override fun setTime(time: String) {
@@ -48,25 +45,26 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
         _binding = NewTrackFragmentBinding.inflate(layoutInflater, container, false)
 
         // Setup presenter
-        val sensorManager = requireActivity().getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        presenter.initialize(sensorManager)
+        _presenter = NewTrackPresenter(this, requireActivity().application as DynamicalApplication)
+        presenter.initialize()
 
         // Setup button
         binding.actionButton.setOnClickListener { presenter.onButtonClicked() }
-/*
+
         val mapFragment = MapFragment()
         mapFragment.position = LatLng(50.049683, 19.944544)
         with(requireActivity().supportFragmentManager.beginTransaction()) {
             replace(R.id.map_fragment_container, mapFragment)
             commit()
         }
-*/
+
         return binding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         presenter.finalize()
+        _presenter = null
         _binding = null
     }
 }
