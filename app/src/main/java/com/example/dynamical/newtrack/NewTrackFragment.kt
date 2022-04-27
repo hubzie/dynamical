@@ -1,71 +1,72 @@
-package com.example.dynamical
+package com.example.dynamical.newtrack
 
 import android.content.Context
 import android.hardware.SensorManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.dynamical.MapFragment
+import com.example.dynamical.R
 import com.example.dynamical.databinding.NewTrackFragmentBinding
+import com.example.dynamical.mesure.StepCounter
+import com.example.dynamical.mesure.Stopwatch
 import com.google.android.gms.maps.model.LatLng
 
-class NewTrackFragment : Fragment(R.layout.new_track_fragment) {
+class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
+    // Binding
     private var _binding: NewTrackFragmentBinding? = null
     private val binding get() = _binding!!
 
-    private var _sensorHandler: SensorHandler? = null
-    private val sensorHandler get() = _sensorHandler!!
+    // NewTrackPresenter
+    private val presenter = NewTrackPresenter(this)
 
-    private val stopwatch = Stopwatch()
-    private var isRunning = false
+    // Interface implementation
+    override fun setTime(time: String) {
+        binding.timeTextView.text = time
+    }
+    override fun setStepCount(stepCount: String) {
+        binding.stepCountTextView.text = stepCount
+    }
 
-    private fun start() {
-        isRunning = true
+    override fun onMeasureStart() {
         binding.actionButton.setImageResource(R.drawable.ic_baseline_pause_24)
-        sensorHandler.start()
-        stopwatch.start()
     }
-
-    private fun stop() {
-        isRunning = false
+    override fun onMeasureStop() {
         binding.actionButton.setImageResource(R.drawable.ic_baseline_play_arrow_24)
-        sensorHandler.stop()
-        stopwatch.stop()
     }
 
+    // Fragment interface implementation
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        // Setup binding
         _binding = NewTrackFragmentBinding.inflate(layoutInflater, container, false)
-        _sensorHandler =
-            SensorHandler(requireActivity().getSystemService(Context.SENSOR_SERVICE) as SensorManager)
-        stopwatch.reset()
 
-        sensorHandler.setOnChangeAction { binding.stepCountTextView.text = "$it" }
-        stopwatch.setOnTickAction { binding.timeTextView.text = Stopwatch.timeToString(it) }
+        // Setup presenter
+        val sensorManager = requireActivity().getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        presenter.initialize(sensorManager)
 
-        binding.actionButton.setOnClickListener {
-            if (!isRunning) start()
-            else stop()
-        }
-
+        // Setup button
+        binding.actionButton.setOnClickListener { presenter.onButtonClicked() }
+/*
         val mapFragment = MapFragment()
         mapFragment.position = LatLng(50.049683, 19.944544)
         with(requireActivity().supportFragmentManager.beginTransaction()) {
             replace(R.id.map_fragment_container, mapFragment)
             commit()
         }
-
+*/
         return binding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        stop()
-        _sensorHandler = null
+        presenter.finalize()
         _binding = null
     }
 }

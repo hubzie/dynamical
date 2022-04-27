@@ -1,25 +1,34 @@
-package com.example.dynamical
+package com.example.dynamical.mesure
 
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 
-class SensorHandler(private val sensorManager: SensorManager) : SensorEventListener {
-    private var action: ((Int) -> Unit)? = null
+class StepCounter(private val sensorManager: SensorManager) : SensorEventListener {
+    // Observer pattern
+    interface Observer {
+        fun onStepCountChanged(stepCount: Int)
+    }
+
+    private val observers = ArrayList<Observer>()
+    fun addObserver(o: Observer) { observers.add(o) }
+    fun removeObserver(o: Observer) { observers.remove(o) }
+
+    // Configure sensor
     private val stepCounterSensor: Sensor? =
         sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
 
+    // Auxiliary variables
     private var startStep: Int? = null
     private var lastStep: Int = 0
     private var stepsBeforeStart: Int = 0
-    val stepCount: Int
+
+    // Step count
+    private val stepCount: Int
         get() = stepsBeforeStart + lastStep - (startStep ?: lastStep)
 
-    fun setOnChangeAction(newAction: (Int) -> Unit) {
-        action = newAction
-    }
-
+    // Start step counter
     fun start() {
         startStep = null
         sensorManager.registerListener(
@@ -29,6 +38,7 @@ class SensorHandler(private val sensorManager: SensorManager) : SensorEventListe
         )
     }
 
+    // Stop step counter
     fun stop() {
         stepsBeforeStart += lastStep - (startStep ?: lastStep)
         lastStep = (startStep ?: lastStep)
@@ -38,7 +48,7 @@ class SensorHandler(private val sensorManager: SensorManager) : SensorEventListe
     override fun onSensorChanged(event: SensorEvent) {
         startStep = startStep ?: event.values[0].toInt()
         lastStep = event.values[0].toInt()
-        action?.invoke(stepCount)
+        observers.forEach { o -> o.onStepCountChanged(stepCount) }
     }
 
     override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}
