@@ -7,6 +7,7 @@ import com.example.dynamical.data.RouteDatabase
 import com.example.dynamical.data.RouteRepository
 import com.example.dynamical.mesure.StepCounter
 import com.example.dynamical.mesure.Stopwatch
+import com.example.dynamical.mesure.Tracker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 
@@ -16,8 +17,5 @@ class DynamicalApplication : Application() {
     private val database by lazy { RouteDatabase.getDatabase(this, applicationScope) }
     val repository by lazy { RouteRepository(database.routeDao()) }
 
-    val stopwatch: Stopwatch by lazy { Stopwatch() }
-    val stepCounter: StepCounter by lazy {
-        StepCounter(getSystemService(Context.SENSOR_SERVICE) as SensorManager)
-    }
+    val tracker by lazy { Tracker(this) }
 }

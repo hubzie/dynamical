@@ -18,6 +18,19 @@
         app:layout_constraintTop_toBottomOf="@id/map_fragment_container"
         tools:ignore="ContentDescription" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/reset_button"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:src="@drawable/ic_baseline_reset_24"
+        app:layout_constraintBottom_toBottomOf="@id/map_fragment_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/action_button"
+        app:layout_constraintTop_toBottomOf="@id/map_fragment_container"
+        tools:ignore="ContentDescription" />
+
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/map_fragment_container"
         android:layout_width="match_parent"
@@ -31,7 +44,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/map_fragment_container">
+        app:layout_constraintTop_toBottomOf="@id/map_fragment_container"
+        android:layout_marginTop="20dp" >
 
         <LinearLayout
             android:id="@+id/time_layout"

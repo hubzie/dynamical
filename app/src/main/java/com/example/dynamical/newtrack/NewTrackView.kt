@@ -4,5 +4,6 @@ interface NewTrackView {
     fun setTime(time: String)
     fun setStepCount(stepCount: String)
     fun onMeasureStart()
-    fun onMeasureStop()
+    fun onMeasurePause()
+    fun onMeasureReset()
 }

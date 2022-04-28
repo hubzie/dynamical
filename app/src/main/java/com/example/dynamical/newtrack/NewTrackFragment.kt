@@ -30,9 +30,15 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
 
     override fun onMeasureStart() {
         binding.actionButton.setImageResource(R.drawable.ic_baseline_pause_24)
+        binding.resetButton.visibility = View.VISIBLE
     }
-    override fun onMeasureStop() {
+    override fun onMeasurePause() {
         binding.actionButton.setImageResource(R.drawable.ic_baseline_play_arrow_24)
+        binding.resetButton.visibility = View.VISIBLE
+    }
+    override fun onMeasureReset() {
+        binding.actionButton.setImageResource(R.drawable.ic_baseline_play_arrow_24)
+        binding.resetButton.visibility = View.INVISIBLE
     }
 
     // Fragment interface implementation
@@ -49,15 +55,16 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
         presenter.initialize()
 
         // Setup button
-        binding.actionButton.setOnClickListener { presenter.onButtonClicked() }
-
+        binding.actionButton.setOnClickListener { presenter.onFlipState() }
+        binding.resetButton.setOnClickListener { presenter.onReset() }
+/*
         val mapFragment = MapFragment()
         mapFragment.position = LatLng(50.049683, 19.944544)
         with(requireActivity().supportFragmentManager.beginTransaction()) {
             replace(R.id.map_fragment_container, mapFragment)
             commit()
         }
-
+*/
         return binding.root
     }
 

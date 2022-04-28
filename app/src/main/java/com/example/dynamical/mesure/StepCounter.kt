@@ -12,8 +12,13 @@ class StepCounter(private val sensorManager: SensorManager) : SensorEventListene
     }
 
     private val observers = ArrayList<Observer>()
-    fun addObserver(o: Observer) { observers.add(o) }
+    fun addObserver(o: Observer) {
+        observers.add(o)
+        o.onStepCountChanged(stepCount)
+    }
     fun removeObserver(o: Observer) { observers.remove(o) }
+
+    private fun updateObservers() = observers.forEach { o -> o.onStepCountChanged(stepCount) }
 
     // Configure sensor
     private val stepCounterSensor: Sensor? =
@@ -36,6 +41,7 @@ class StepCounter(private val sensorManager: SensorManager) : SensorEventListene
             stepCounterSensor,
             SensorManager.SENSOR_DELAY_NORMAL
         )
+        updateObservers()
     }
 
     // Stop step counter
@@ -43,12 +49,21 @@ class StepCounter(private val sensorManager: SensorManager) : SensorEventListene
         stepsBeforeStart += lastStep - (startStep ?: lastStep)
         lastStep = (startStep ?: lastStep)
         sensorManager.unregisterListener(this)
+        updateObservers()
     }
 
+    // Reset step counter
+    fun reset() {
+        stop()
+        stepsBeforeStart = 0
+        updateObservers()
+    }
+
+    // Handle sensor
     override fun onSensorChanged(event: SensorEvent) {
         startStep = startStep ?: event.values[0].toInt()
         lastStep = event.values[0].toInt()
-        observers.forEach { o -> o.onStepCountChanged(stepCount) }
+        updateObservers()
     }
 
     override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}

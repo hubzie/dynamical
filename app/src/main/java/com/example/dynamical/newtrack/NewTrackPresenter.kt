@@ -3,54 +3,51 @@ package com.example.dynamical.newtrack
 import com.example.dynamical.DynamicalApplication
 import com.example.dynamical.mesure.StepCounter
 import com.example.dynamical.mesure.Stopwatch
+import com.example.dynamical.mesure.Tracker
 
 class NewTrackPresenter(private val view: NewTrackView, application: DynamicalApplication) {
-    // Stopwatch and it's observer
-    private val stopwatch: Stopwatch = application.stopwatch
+    // Tracker and it's observers
+    private val tracker: Tracker = application.tracker
     private val stopwatchObserver = object : Stopwatch.Observer {
         override fun onStopwatchTick(time: Long) = view.setTime(Stopwatch.timeToString(time))
     }
-
-    // Step counter and it's observer
-    private val stepCounter: StepCounter = application.stepCounter
     private val stepCounterObserver = object : StepCounter.Observer {
         override fun onStepCountChanged(stepCount: Int) = view.setStepCount("$stepCount")
     }
 
-    // Is measure active?
-    private var isRunning = false
-
     fun initialize() {
-        stopwatch.reset()
+        tracker.addStopwatchObserver(stopwatchObserver)
+        tracker.addStepCounterObserver(stepCounterObserver)
 
-        stopwatch.addObserver(stopwatchObserver)
-        stepCounter.addObserver(stepCounterObserver)
-
-        isRunning = false
+        when(tracker.state) {
+            Tracker.State.RUNNING -> view.onMeasureStart()
+            Tracker.State.PAUSED -> view.onMeasurePause()
+            Tracker.State.STOPPED -> view.onMeasureReset()
+        }
     }
 
     fun finalize() {
-        stopwatch.removeObserver(stopwatchObserver)
-        stepCounter.removeObserver(stepCounterObserver)
-        isRunning = false
+        tracker.removeStopwatchObserver(stopwatchObserver)
+        tracker.removeStepCounterObserver(stepCounterObserver)
     }
 
     private fun stopMeasure() {
-        isRunning = false
-        stopwatch.stop()
-        stepCounter.stop()
-        view.onMeasureStop()
+        tracker.stop()
+        view.onMeasurePause()
     }
 
     private fun startMeasure() {
-        isRunning = true
-        stopwatch.start()
-        stepCounter.start()
+        tracker.start()
         view.onMeasureStart()
     }
 
-    fun onButtonClicked() {
-        if (isRunning) stopMeasure()
+    fun onFlipState() {
+        if (tracker.state == Tracker.State.RUNNING) stopMeasure()
         else startMeasure()
+    }
+
+    fun onReset() {
+        tracker.reset()
+        view.onMeasureReset()
     }
 }

@@ -5,7 +5,7 @@ import android.text.format.DateUtils
 
 class Stopwatch {
     companion object {
-        const val PERIOD = 200L
+        const val PERIOD = 100L
         fun timeToString(time: Long): String = DateUtils.formatElapsedTime(time / 1000)
     }
 
@@ -15,7 +15,10 @@ class Stopwatch {
     }
 
     private val observers = ArrayList<Observer>()
-    fun addObserver(o: Observer) { observers.add(o) }
+    fun addObserver(o: Observer) {
+        observers.add(o)
+        o.onStopwatchTick(time)
+    }
     fun removeObserver(o: Observer) { observers.remove(o) }
 
     private fun updateObservers() = observers.forEach { o -> o.onStopwatchTick(time) }
