@@ -1,4 +1,4 @@
-package com.example.dynamical.newtrack
+package com.example.dynamical.newtrack.fragment
 
 interface NewTrackView {
     fun setTime(time: String)

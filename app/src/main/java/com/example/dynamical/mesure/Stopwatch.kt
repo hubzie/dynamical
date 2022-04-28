@@ -53,8 +53,9 @@ class Stopwatch {
     }
 
     fun reset() {
-        timeBeforeStart = 0
+        isRunning = false
         clock.cancel()
+        timeBeforeStart = 0
         updateObservers()
     }
 }

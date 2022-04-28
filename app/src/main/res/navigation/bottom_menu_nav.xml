@@ -12,7 +12,7 @@
         tools:layout="@layout/route_list_fragment" />
     <fragment
         android:id="@+id/new_track_fragment"
-        android:name="com.example.dynamical.newtrack.NewTrackFragment"
+        android:name="com.example.dynamical.newtrack.fragment.NewTrackFragment"
         android:label="@string/new_track_title"
         tools:layout="@layout/new_track_fragment" />
     <fragment

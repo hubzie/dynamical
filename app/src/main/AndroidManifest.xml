@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.dynamical">
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+
     <application
         android:name=".DynamicalApplication"
         android:allowBackup="true"
@@ -18,6 +20,10 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />
 
+        <service
+            android:name=".newtrack.service.TrackerService"
+            android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -29,6 +35,6 @@
 
         <activity
             android:name=".routelist.RouteDetailsActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
     </application>
 </manifest>

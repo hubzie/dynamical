@@ -1,4 +1,4 @@
-package com.example.dynamical.newtrack
+package com.example.dynamical.newtrack.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,10 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.dynamical.DynamicalApplication
-import com.example.dynamical.MapFragment
 import com.example.dynamical.R
 import com.example.dynamical.databinding.NewTrackFragmentBinding
-import com.google.android.gms.maps.model.LatLng
 
 class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
     // Binding

@@ -12,5 +12,7 @@
 
     <string name="route_details_title">Route details</string>
 
+    <string name="notification_title">Dynamical</string>
+
     <string name="EXTRA_ROUTE_ID">com.example.dynamical.extra.ROUTE_ID</string>
 </resources>
