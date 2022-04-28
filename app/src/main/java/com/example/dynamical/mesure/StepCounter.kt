@@ -4,22 +4,10 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 
 class StepCounter(private val sensorManager: SensorManager) : SensorEventListener {
-    // Observer pattern
-    interface Observer {
-        fun onStepCountChanged(stepCount: Int)
-    }
-
-    private val observers = ArrayList<Observer>()
-    fun addObserver(o: Observer) {
-        observers.add(o)
-        o.onStepCountChanged(stepCount)
-    }
-    fun removeObserver(o: Observer) { observers.remove(o) }
-
-    private fun updateObservers() = observers.forEach { o -> o.onStepCountChanged(stepCount) }
-
     // Configure sensor
     private val stepCounterSensor: Sensor? =
         sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
@@ -30,8 +18,12 @@ class StepCounter(private val sensorManager: SensorManager) : SensorEventListene
     private var stepsBeforeStart: Int = 0
 
     // Step count
-    private val stepCount: Int
-        get() = stepsBeforeStart + lastStep - (startStep ?: lastStep)
+    private val _stepCount = MutableLiveData<Int>()
+    val stepCount: LiveData<Int> = _stepCount
+
+    private fun update() {
+        _stepCount.value = stepsBeforeStart + lastStep - (startStep ?: lastStep)
+    }
 
     // Start step counter
     fun start() {
@@ -41,7 +33,7 @@ class StepCounter(private val sensorManager: SensorManager) : SensorEventListene
             stepCounterSensor,
             SensorManager.SENSOR_DELAY_NORMAL
         )
-        updateObservers()
+        update()
     }
 
     // Stop step counter
@@ -49,21 +41,21 @@ class StepCounter(private val sensorManager: SensorManager) : SensorEventListene
         stepsBeforeStart += lastStep - (startStep ?: lastStep)
         lastStep = (startStep ?: lastStep)
         sensorManager.unregisterListener(this)
-        updateObservers()
+        update()
     }
 
     // Reset step counter
     fun reset() {
         stop()
         stepsBeforeStart = 0
-        updateObservers()
+        update()
     }
 
     // Handle sensor
     override fun onSensorChanged(event: SensorEvent) {
         startStep = startStep ?: event.values[0].toInt()
         lastStep = event.values[0].toInt()
-        updateObservers()
+        update()
     }
 
     override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}

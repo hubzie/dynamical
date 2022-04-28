@@ -2,7 +2,6 @@ package com.example.dynamical.newtrack.fragment
 
 import android.content.Intent
 import com.example.dynamical.DynamicalApplication
-import com.example.dynamical.mesure.StepCounter
 import com.example.dynamical.mesure.Stopwatch
 import com.example.dynamical.mesure.Tracker
 import com.example.dynamical.newtrack.service.TrackerService
@@ -10,27 +9,16 @@ import com.example.dynamical.newtrack.service.TrackerService
 class NewTrackPresenter(private val view: NewTrackView, private val application: DynamicalApplication) {
     // Tracker and it's observers
     private val tracker: Tracker = application.tracker
-    private val stopwatchObserver = object : Stopwatch.Observer {
-        override fun onStopwatchTick(time: Long) = view.setTime(Stopwatch.timeToString(time))
-    }
-    private val stepCounterObserver = object : StepCounter.Observer {
-        override fun onStepCountChanged(stepCount: Int) = view.setStepCount("$stepCount")
-    }
 
     fun initialize() {
-        tracker.addStopwatchObserver(stopwatchObserver)
-        tracker.addStepCounterObserver(stepCounterObserver)
+        tracker.time.observe(view.lifecycleOwner) { time -> view.setTime(Stopwatch.timeToString(time)) }
+        tracker.stepCount.observe(view.lifecycleOwner) { stepCount -> view.setStepCount("$stepCount") }
 
         when(tracker.state) {
             Tracker.State.RUNNING -> view.onMeasureStart()
             Tracker.State.PAUSED -> view.onMeasurePause()
             Tracker.State.STOPPED -> view.onMeasureReset()
         }
-    }
-
-    fun finalize() {
-        tracker.removeStopwatchObserver(stopwatchObserver)
-        tracker.removeStepCounterObserver(stepCounterObserver)
     }
 
     private fun pauseMeasure() {
@@ -42,7 +30,6 @@ class NewTrackPresenter(private val view: NewTrackView, private val application:
         // Create notification
         if (tracker.state == Tracker.State.STOPPED) {
             val intent = Intent(application.applicationContext, TrackerService::class.java)
-            application.startForegroundService(intent)
             application.startForegroundService(intent)
         }
 

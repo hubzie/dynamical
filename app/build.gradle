@@ -62,4 +62,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-common-java8:$livecycle_version"
 
     implementation 'androidx.fragment:fragment-ktx:1.4.1'
+
+    implementation "androidx.lifecycle:lifecycle-service:2.4.1"
 }

@@ -22,7 +22,8 @@
 
         <service
             android:name=".newtrack.service.TrackerService"
-            android:exported="false" />
+            android:exported="false"
+            android:enabled="true" />
 
         <activity
             android:name=".MainActivity"

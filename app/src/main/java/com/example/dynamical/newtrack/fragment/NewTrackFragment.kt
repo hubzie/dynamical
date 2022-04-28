@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
 import com.example.dynamical.DynamicalApplication
 import com.example.dynamical.R
 import com.example.dynamical.databinding.NewTrackFragmentBinding
@@ -19,6 +20,8 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
     private val presenter get() = _presenter!!
 
     // Interface implementation
+    override val lifecycleOwner: LifecycleOwner = this
+
     override fun setTime(time: String) {
         binding.timeTextView.text = time
     }
@@ -68,7 +71,6 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        presenter.finalize()
         _presenter = null
         _binding = null
     }

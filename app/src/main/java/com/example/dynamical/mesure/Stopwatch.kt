@@ -2,6 +2,8 @@ package com.example.dynamical.mesure
 
 import android.os.CountDownTimer
 import android.text.format.DateUtils
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 
 class Stopwatch {
     companion object {
@@ -9,23 +11,9 @@ class Stopwatch {
         fun timeToString(time: Long): String = DateUtils.formatElapsedTime(time / 1000)
     }
 
-    // Observer pattern
-    interface Observer {
-        fun onStopwatchTick(time: Long)
-    }
-
-    private val observers = ArrayList<Observer>()
-    fun addObserver(o: Observer) {
-        observers.add(o)
-        o.onStopwatchTick(time)
-    }
-    fun removeObserver(o: Observer) { observers.remove(o) }
-
-    private fun updateObservers() = observers.forEach { o -> o.onStopwatchTick(time) }
-
     // Clock
     private val clock = object : CountDownTimer(Long.MAX_VALUE, PERIOD) {
-        override fun onTick(p0: Long) = updateObservers()
+        override fun onTick(p0: Long) = update()
         override fun onFinish() {}
     }
 
@@ -35,27 +23,31 @@ class Stopwatch {
     private var isRunning = false
 
     // Time
-    private val time: Long
-        get() = timeBeforeStart + (if(isRunning) System.currentTimeMillis() - startTime else 0L)
+    private val _time = MutableLiveData<Long>()
+    val time: LiveData<Long> = _time
+
+    private fun update() {
+        _time.value = timeBeforeStart + (if(isRunning) System.currentTimeMillis() - startTime else 0L)
+    }
 
     fun start() {
         clock.start()
         isRunning = true
         startTime = System.currentTimeMillis()
-        updateObservers()
+        update()
     }
 
     fun stop() {
         clock.cancel()
         isRunning = false
         timeBeforeStart += System.currentTimeMillis() - startTime
-        updateObservers()
+        update()
     }
 
     fun reset() {
         isRunning = false
         clock.cancel()
         timeBeforeStart = 0
-        updateObservers()
+        update()
     }
 }
