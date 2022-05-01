@@ -1,5 +1,6 @@
 package com.example.dynamical.newtrack.fragment
 
+import android.location.Location
 import androidx.lifecycle.LifecycleOwner
 
 interface NewTrackView {
@@ -10,6 +11,7 @@ interface NewTrackView {
 
     fun setTime(time: String)
     fun setStepCount(stepCount: String)
+    fun setLocation(location: Location)
 
     fun onMeasureStart()
     fun onMeasurePause()

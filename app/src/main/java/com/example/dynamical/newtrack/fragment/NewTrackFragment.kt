@@ -2,6 +2,7 @@ package com.example.dynamical.newtrack.fragment
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,8 +12,10 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import com.example.dynamical.DynamicalApplication
+import com.example.dynamical.MapFragment
 import com.example.dynamical.R
 import com.example.dynamical.databinding.NewTrackFragmentBinding
+import com.google.android.gms.maps.model.LatLng
 
 class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
     // Binding
@@ -22,6 +25,9 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
     // NewTrackPresenter
     private var _presenter: NewTrackPresenter? = null
     private val presenter get() = _presenter!!
+
+    // Map fragment
+    private val mapFragment = MapFragment()
 
     // Interface implementation
     override val lifecycleOwner: LifecycleOwner = this
@@ -39,8 +45,8 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
             Manifest.permission.ACCESS_FINE_LOCATION
         )
 
-        if (permission != PackageManager.PERMISSION_GRANTED)
-            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        if (permission == PackageManager.PERMISSION_GRANTED) locationPermission = true
+        else requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
     override fun setTime(time: String) {
@@ -48,6 +54,9 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
     }
     override fun setStepCount(stepCount: String) {
         binding.stepCountTextView.text = stepCount
+    }
+    override fun setLocation(location: Location) {
+        mapFragment.position = LatLng(location.latitude, location.longitude)
     }
 
     override fun onMeasureStart() {
@@ -79,14 +88,13 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
         // Setup button
         binding.actionButton.setOnClickListener { presenter.onFlipState() }
         binding.resetButton.setOnClickListener { presenter.onReset() }
-/*
-        val mapFragment = MapFragment()
+
         mapFragment.position = LatLng(50.049683, 19.944544)
         with(requireActivity().supportFragmentManager.beginTransaction()) {
             replace(R.id.map_fragment_container, mapFragment)
             commit()
         }
-*/
+
         return binding.root
     }
 

@@ -11,12 +11,17 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 
 class MapFragment : Fragment(R.layout.map_fragment), OnMapReadyCallback {
     private var _binding: MapFragmentBinding? = null
     private val binding get() = _binding!!
     private lateinit var map: GoogleMap
     private var _position = LatLng(0.0, 0.0)
+
+    private var marker: Marker? = null
+
     var position: LatLng
         get() = _position
         set(value) {
@@ -44,14 +49,15 @@ class MapFragment : Fragment(R.layout.map_fragment), OnMapReadyCallback {
 
     private fun updatePosition() {
         if (!::map.isInitialized) return
-        with(map) {
-            moveCamera(CameraUpdateFactory.newLatLngZoom(position, 10f))
-            mapType = GoogleMap.MAP_TYPE_NORMAL
-        }
+        map.moveCamera(CameraUpdateFactory.newLatLng(position))
+
+        marker?.remove()
+        marker = map.addMarker(MarkerOptions().position(position))
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
+        map.mapType = GoogleMap.MAP_TYPE_NORMAL
         updatePosition()
     }
 }

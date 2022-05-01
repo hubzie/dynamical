@@ -15,6 +15,7 @@ class NewTrackPresenter(private val view: NewTrackView, private val application:
     fun initialize() {
         tracker.time.observe(view.lifecycleOwner) { time -> view.setTime(Stopwatch.timeToString(time)) }
         tracker.stepCount.observe(view.lifecycleOwner) { stepCount -> view.setStepCount("$stepCount") }
+        tracker.location.observe(view.lifecycleOwner) { location -> view.setLocation(location) }
 
         when(tracker.state) {
             Tracker.State.RUNNING -> view.onMeasureStart()
