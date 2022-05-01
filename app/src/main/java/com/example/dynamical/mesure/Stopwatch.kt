@@ -1,18 +1,22 @@
 package com.example.dynamical.mesure
 
+import android.app.Application
 import android.os.CountDownTimer
 import android.text.format.DateUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.dynamical.R
 
-class Stopwatch {
+class Stopwatch(application: Application) {
     companion object {
-        const val PERIOD = 100L
         fun timeToString(time: Long): String = DateUtils.formatElapsedTime(time / 1000)
     }
 
     // Clock
-    private val clock = object : CountDownTimer(Long.MAX_VALUE, PERIOD) {
+    private val clock = object : CountDownTimer(
+        Long.MAX_VALUE,
+        application.resources.getInteger(R.integer.clock_interval).toLong()
+    ) {
         override fun onTick(p0: Long) = update()
         override fun onFinish() {}
     }
@@ -27,7 +31,8 @@ class Stopwatch {
     val time: LiveData<Long> = _time
 
     private fun update() {
-        _time.value = timeBeforeStart + (if(isRunning) System.currentTimeMillis() - startTime else 0L)
+        _time.value =
+            timeBeforeStart + (if (isRunning) System.currentTimeMillis() - startTime else 0L)
     }
 
     fun start() {

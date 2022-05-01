@@ -5,13 +5,15 @@ import android.location.Location
 import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.dynamical.R
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 
 class GPS(application: Application) : LocationCallback() {
-    private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(application.applicationContext)
+    private val fusedLocationClient =
+        LocationServices.getFusedLocationProviderClient(application.applicationContext)
 
     private val _location = MutableLiveData<Location>()
     val location: LiveData<Location> = _location
@@ -22,13 +24,13 @@ class GPS(application: Application) : LocationCallback() {
             _location.value = location
     }
 
-    fun start() {
-        val request = LocationRequest.create().apply {
-            interval = 5*1000
-            fastestInterval = 5*1000
-            priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
-        }
+    private val request = LocationRequest.create().apply {
+        interval = application.resources.getInteger(R.integer.GPS_interval).toLong()
+        fastestInterval = application.resources.getInteger(R.integer.GPS_fastest_interval).toLong()
+        priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
+    }
 
+    fun start() {
         fusedLocationClient.requestLocationUpdates(
             request,
             this,

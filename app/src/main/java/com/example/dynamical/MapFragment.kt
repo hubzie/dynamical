@@ -6,13 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.dynamical.databinding.MapFragmentBinding
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 
 class MapFragment : Fragment(R.layout.map_fragment), OnMapReadyCallback {
     private var _binding: MapFragmentBinding? = null
@@ -28,6 +25,9 @@ class MapFragment : Fragment(R.layout.map_fragment), OnMapReadyCallback {
             _position = value
             updatePosition()
         }
+
+    private var _polyline: Polyline? = null
+    private val polyline get() = _polyline!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,11 +45,12 @@ class MapFragment : Fragment(R.layout.map_fragment), OnMapReadyCallback {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        _polyline = null
     }
 
     private fun updatePosition() {
         if (!::map.isInitialized) return
-        map.moveCamera(CameraUpdateFactory.newLatLng(position))
+        // map.moveCamera(CameraUpdateFactory.newLatLng(position))
 
         marker?.remove()
         marker = map.addMarker(MarkerOptions().position(position))
@@ -58,6 +59,11 @@ class MapFragment : Fragment(R.layout.map_fragment), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
         map.mapType = GoogleMap.MAP_TYPE_NORMAL
+        _polyline = map.addPolyline(PolylineOptions())
         updatePosition()
+    }
+
+    fun updateRoute(points: List<LatLng>) {
+        polyline.points = points
     }
 }

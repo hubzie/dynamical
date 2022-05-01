@@ -8,6 +8,7 @@
     <string name="settings_title">Settings</string>
 
     <string name="stopwatch_title">Time</string>
+    <string name="distance_title">Distance</string>
     <string name="step_counter_title">Steps</string>
 
     <string name="route_details_title">Route details</string>

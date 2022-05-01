@@ -1,14 +1,16 @@
 package com.example.dynamical.newtrack.fragment
 
 import android.content.Intent
-import android.util.Log
 import android.widget.Toast
 import com.example.dynamical.DynamicalApplication
 import com.example.dynamical.mesure.Stopwatch
 import com.example.dynamical.mesure.Tracker
 import com.example.dynamical.newtrack.service.TrackerService
 
-class NewTrackPresenter(private val view: NewTrackView, private val application: DynamicalApplication) {
+class NewTrackPresenter(
+    private val view: NewTrackView,
+    private val application: DynamicalApplication
+) {
     // Tracker and it's observers
     private val tracker: Tracker = application.tracker
 
@@ -16,8 +18,13 @@ class NewTrackPresenter(private val view: NewTrackView, private val application:
         tracker.time.observe(view.lifecycleOwner) { time -> view.setTime(Stopwatch.timeToString(time)) }
         tracker.stepCount.observe(view.lifecycleOwner) { stepCount -> view.setStepCount("$stepCount") }
         tracker.location.observe(view.lifecycleOwner) { location -> view.setLocation(location) }
+        tracker.distance.observe(view.lifecycleOwner) { distance ->
+            if (distance < 1000.0f) view.setDistance("%.0fm".format(distance))
+            else view.setDistance("%.1fkm".format(distance / 1000))
+        }
+        tracker.route.observe(view.lifecycleOwner) { route -> view.drawRoute(route) }
 
-        when(tracker.state) {
+        when (tracker.state) {
             Tracker.State.RUNNING -> view.onMeasureStart()
             Tracker.State.PAUSED -> view.onMeasurePause()
             Tracker.State.STOPPED -> view.onMeasureReset()
@@ -34,7 +41,6 @@ class NewTrackPresenter(private val view: NewTrackView, private val application:
         if (tracker.state == Tracker.State.STOPPED) {
             if (!view.locationPermission) view.requestPermission()
             if (!view.locationPermission) {
-                Log.d("LOCK", "toast")
                 Toast.makeText(
                     application.applicationContext,
                     "Required permissions denied",

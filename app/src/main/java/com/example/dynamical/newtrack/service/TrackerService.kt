@@ -39,10 +39,11 @@ class TrackerService : LifecycleService() {
             .setDestination(R.id.new_track_fragment)
             .createPendingIntent()
 
-        notificationBuilder = Notification.Builder(this, DynamicalApplication.NOTIFICATION_CHANNEL_ID)
-            .setContentTitle(getString(R.string.notification_title))
-            .setSmallIcon(R.mipmap.ic_launcher_round)
-            .setContentIntent(pendingIntent)
+        notificationBuilder =
+            Notification.Builder(this, DynamicalApplication.NOTIFICATION_CHANNEL_ID)
+                .setContentTitle(getString(R.string.notification_title))
+                .setSmallIcon(R.mipmap.ic_launcher_round)
+                .setContentIntent(pendingIntent)
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
 

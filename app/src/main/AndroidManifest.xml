@@ -6,9 +6,11 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-    <uses-feature android:name="android.hardware.sensor.stepcounter"
+    <uses-feature
+        android:name="android.hardware.sensor.stepcounter"
         android:required="false" />
-    <uses-feature android:name="android.hardware.location"
+    <uses-feature
+        android:name="android.hardware.location"
         android:required="true" />
 
     <application
@@ -29,8 +31,8 @@
 
         <service
             android:name=".newtrack.service.TrackerService"
-            android:exported="false"
             android:enabled="true"
+            android:exported="false"
             android:foregroundServiceType="location" />
 
         <activity

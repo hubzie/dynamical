@@ -16,7 +16,7 @@ class RouteListFragment : Fragment() {
     private var _binding: RouteListFragmentBinding? = null
     private val binding get() = _binding!!
 
-private val routeViewModel: RouteViewModel by viewModels {
+    private val routeViewModel: RouteViewModel by viewModels {
         RouteViewModelFactory((requireActivity().application as DynamicalApplication).repository)
     }
 

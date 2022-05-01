@@ -5,15 +5,35 @@ import android.content.Context
 import android.hardware.SensorManager
 import android.location.Location
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.google.android.gms.maps.model.LatLng
 
 class Tracker(application: Application) {
-    private val stepCounter = StepCounter(application.getSystemService(Context.SENSOR_SERVICE) as SensorManager)
-    private val stopwatch = Stopwatch()
+    private val stepCounter =
+        StepCounter(application.getSystemService(Context.SENSOR_SERVICE) as SensorManager)
+    private val stopwatch = Stopwatch(application)
     private val gps = GPS(application)
 
     val stepCount: LiveData<Int> get() = stepCounter.stepCount
     val time: LiveData<Long> get() = stopwatch.time
     val location: LiveData<Location> get() = gps.location
+
+    private val _route = MutableLiveData<List<LatLng>>()
+    val route: LiveData<List<LatLng>> = _route
+
+    private val _distance = MutableLiveData<Float>()
+    val distance: LiveData<Float> = _distance
+
+    private var previousLocation: Location? = null
+
+    init {
+        location.observeForever {
+            val location = LatLng(it.latitude, it.longitude)
+            _distance.value = (_distance.value ?: 0.0f) + (previousLocation?.distanceTo(it) ?: 0.0f)
+            previousLocation = it
+            _route.value = _route.value?.plus(location) ?: listOf(location)
+        }
+    }
 
     enum class State {
         STOPPED, RUNNING, PAUSED
@@ -40,5 +60,9 @@ class Tracker(application: Application) {
         state = State.STOPPED
         stopwatch.reset()
         stepCounter.reset()
+
+        _route.value = listOf()
+        _distance.value = 0.0f
+        previousLocation = null
     }
 }
