@@ -11,6 +11,7 @@ import com.example.dynamical.R
 import com.example.dynamical.mesure.Stopwatch.Companion.timeToString
 import com.example.dynamical.mesure.Tracker
 
+// TODO: prevent sleeping
 class TrackerService : LifecycleService() {
     private lateinit var notificationBuilder: Notification.Builder
     private lateinit var notificationManager: NotificationManager
@@ -56,7 +57,7 @@ class TrackerService : LifecycleService() {
             }
             tracker.stepCount.observe(this) { stepCount ->
                 this.stepCount = stepCount
-                updateNotification()
+                // updateNotification()
             }
 
             isRunning = true

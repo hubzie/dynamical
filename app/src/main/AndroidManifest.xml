@@ -2,7 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.dynamical">
 
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <uses-feature android:name="android.hardware.sensor.stepcounter"
+        android:required="false" />
+    <uses-feature android:name="android.hardware.location"
+        android:required="true" />
 
     <application
         android:name=".DynamicalApplication"
@@ -23,7 +29,8 @@
         <service
             android:name=".newtrack.service.TrackerService"
             android:exported="false"
-            android:enabled="true" />
+            android:enabled="true"
+            android:foregroundServiceType="location" />
 
         <activity
             android:name=".MainActivity"

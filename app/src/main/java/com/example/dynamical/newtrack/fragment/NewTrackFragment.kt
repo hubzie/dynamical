@@ -1,9 +1,13 @@
 package com.example.dynamical.newtrack.fragment
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import com.example.dynamical.DynamicalApplication
@@ -21,6 +25,23 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
 
     // Interface implementation
     override val lifecycleOwner: LifecycleOwner = this
+
+    // TODO: wait for activity result before reading
+    override var locationPermission: Boolean = false
+        private set
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { locationPermission = it }
+
+    override fun requestPermission() {
+        val permission = ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+
+        if (permission != PackageManager.PERMISSION_GRANTED)
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+    }
 
     override fun setTime(time: String) {
         binding.timeTextView.text = time

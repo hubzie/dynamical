@@ -1,6 +1,8 @@
 package com.example.dynamical.newtrack.fragment
 
 import android.content.Intent
+import android.util.Log
+import android.widget.Toast
 import com.example.dynamical.DynamicalApplication
 import com.example.dynamical.mesure.Stopwatch
 import com.example.dynamical.mesure.Tracker
@@ -29,6 +31,17 @@ class NewTrackPresenter(private val view: NewTrackView, private val application:
     private fun startMeasure() {
         // Create notification
         if (tracker.state == Tracker.State.STOPPED) {
+            if (!view.locationPermission) view.requestPermission()
+            if (!view.locationPermission) {
+                Log.d("LOCK", "toast")
+                Toast.makeText(
+                    application.applicationContext,
+                    "Required permissions denied",
+                    Toast.LENGTH_LONG
+                ).show()
+                return
+            }
+
             val intent = Intent(application.applicationContext, TrackerService::class.java)
             application.startForegroundService(intent)
         }
