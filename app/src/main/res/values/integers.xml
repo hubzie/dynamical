@@ -2,6 +2,6 @@
 <resources>
     <integer name="clock_interval">100</integer>
 
-    <integer name="GPS_interval">5000</integer>
-    <integer name="GPS_fastest_interval">5000</integer>
+    <integer name="GPS_interval">10000</integer>
+    <integer name="GPS_fastest_interval">10000</integer>
 </resources>

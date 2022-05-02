@@ -29,13 +29,11 @@ class Tracker(application: Application) {
 
     private var previousLocation: Location? = null
 
-    init {
-        location.observeForever {
-            val location = LatLng(it.latitude, it.longitude)
-            _distance.value = (_distance.value ?: 0.0f) + (previousLocation?.distanceTo(it) ?: 0.0f)
-            previousLocation = it
-            _route.value = _route.value?.plus(location) ?: listOf(location)
-        }
+    private val locationObserver = { it: Location ->
+        val location = LatLng(it.latitude, it.longitude)
+        _distance.value = (_distance.value ?: 0.0f) + (previousLocation?.distanceTo(it) ?: 0.0f)
+        previousLocation = it
+        _route.value = _route.value?.plus(location) ?: listOf(location)
     }
 
     enum class State {
@@ -50,13 +48,14 @@ class Tracker(application: Application) {
         stopwatch.start()
         stepCounter.start()
         gps.start()
+        location.observeForever(locationObserver)
     }
 
     fun stop() {
         state = State.PAUSED
         stopwatch.stop()
         stepCounter.stop()
-        gps.stop()
+        location.removeObserver(locationObserver)
 
         route.value?.let { wholeRoute = wholeRoute.plus(listOf(it)) }
         _route.value = listOf()
@@ -66,6 +65,7 @@ class Tracker(application: Application) {
         state = State.STOPPED
         stopwatch.reset()
         stepCounter.reset()
+        gps.stop()
 
         _route.value = listOf()
         wholeRoute = listOf()

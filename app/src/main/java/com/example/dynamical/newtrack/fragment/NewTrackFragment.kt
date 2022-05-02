@@ -89,6 +89,7 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
     override fun onMeasureReset() {
         binding.actionButton.setImageResource(R.drawable.ic_baseline_play_arrow_24)
         binding.resetButton.visibility = View.INVISIBLE
+        mapFragment.reset()
     }
 
 
@@ -101,20 +102,19 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
         // Setup binding
         _binding = NewTrackFragmentBinding.inflate(layoutInflater, container, false)
 
-        // Setup presenter
-        _presenter = NewTrackPresenter(this, requireActivity().application as DynamicalApplication)
-        presenter.initialize()
-
         // Setup button
         binding.actionButton.setOnClickListener { presenter.onFlipState() }
         binding.resetButton.setOnClickListener { presenter.onReset() }
 
         _mapFragment = MapFragment()
-        mapFragment.position = LatLng(50.049683, 19.944544)
         with(requireActivity().supportFragmentManager.beginTransaction()) {
             replace(R.id.map_fragment_container, mapFragment)
             commit()
         }
+
+        // Setup presenter
+        _presenter = NewTrackPresenter(this, requireActivity().application as DynamicalApplication)
+        presenter.initialize()
 
         return binding.root
     }

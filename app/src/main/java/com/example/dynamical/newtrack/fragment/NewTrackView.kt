@@ -2,7 +2,6 @@ package com.example.dynamical.newtrack.fragment
 
 import android.location.Location
 import androidx.lifecycle.LifecycleOwner
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
 
 interface NewTrackView {

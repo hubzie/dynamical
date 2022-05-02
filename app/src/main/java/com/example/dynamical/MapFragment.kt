@@ -1,7 +1,6 @@
 package com.example.dynamical
 
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,16 +17,16 @@ class MapFragment : Fragment(R.layout.map_fragment), OnMapReadyCallback {
     private var _binding: MapFragmentBinding? = null
     private val binding get() = _binding!!
     private lateinit var map: GoogleMap
-    private var _position = LatLng(0.0, 0.0)
 
     // TODO: make color dependent from theme
     private var markerIcon: BitmapDescriptor? = null
     private var marker: Marker? = null
 
-    var position: LatLng
-        get() = _position
+    private val polylineList: MutableList<Polyline> = mutableListOf()
+
+    var position: LatLng? = null
         set(value) {
-            _position = value
+            field = value
             updatePosition()
         }
 
@@ -37,9 +36,11 @@ class MapFragment : Fragment(R.layout.map_fragment), OnMapReadyCallback {
         savedInstanceState: Bundle?
     ): View {
         _binding = MapFragmentBinding.inflate(inflater, container, false)
-        markerIcon = BitmapDescriptorFactory.fromBitmap(ResourcesCompat
-            .getDrawable(resources, R.drawable.position_dot, null)
-            !!.toBitmap())
+        markerIcon = BitmapDescriptorFactory.fromBitmap(
+            ResourcesCompat
+                .getDrawable(resources, R.drawable.position_dot, null)
+            !!.toBitmap()
+        )
 
         val mapView = childFragmentManager.findFragmentById(R.id.map_view) as SupportMapFragment
         mapView.getMapAsync(this)
@@ -57,10 +58,12 @@ class MapFragment : Fragment(R.layout.map_fragment), OnMapReadyCallback {
         // map.moveCamera(CameraUpdateFactory.newLatLng(position))
 
         marker?.remove()
-        marker = map.addMarker(MarkerOptions()
-            .position(position)
-            .icon(markerIcon)
-            .anchor(0.5f, 0.5f)
+        marker = if (position == null) null
+        else map.addMarker(
+            MarkerOptions()
+                .position(position!!)
+                .icon(markerIcon)
+                .anchor(0.5f, 0.5f)
         )
     }
 
@@ -70,9 +73,15 @@ class MapFragment : Fragment(R.layout.map_fragment), OnMapReadyCallback {
         updatePosition()
     }
 
+    fun reset() {
+        marker?.remove()
+        polylineList.forEach { it.remove() }
+        polylineList.clear()
+    }
+
     // TODO: make color dependent from theme
     fun newPolyline(): Polyline {
-        return map.addPolyline(PolylineOptions()).apply {
+        val polyline = map.addPolyline(PolylineOptions()).apply {
             startCap = RoundCap()
             endCap = RoundCap()
             jointType = JointType.ROUND
@@ -86,5 +95,8 @@ class MapFragment : Fragment(R.layout.map_fragment), OnMapReadyCallback {
             color = typedValue.data */
             color = ResourcesCompat.getColor(resources, R.color.purple_500, null)
         }
+
+        polylineList.add(polyline)
+        return polyline
     }
 }

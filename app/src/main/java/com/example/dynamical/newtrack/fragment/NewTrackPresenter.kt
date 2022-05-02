@@ -12,7 +12,6 @@ class NewTrackPresenter(
     private val view: NewTrackView,
     private val application: DynamicalApplication
 ) {
-    // Tracker and it's observers
     private val tracker: Tracker = application.tracker
 
     fun initialize() {
@@ -24,6 +23,9 @@ class NewTrackPresenter(
             else view.setDistance("%.1fkm".format(distance / 1000))
         }
         tracker.route.observe(view.lifecycleOwner) { route -> polyline?.points = route }
+
+        for (route in tracker.wholeRoute)
+            view.getNewPolyline().points = route
 
         when (tracker.state) {
             Tracker.State.RUNNING -> view.onMeasureStart()

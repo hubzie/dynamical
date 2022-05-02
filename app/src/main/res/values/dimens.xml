@@ -10,5 +10,5 @@
     <dimen name="item_border_width">1dp</dimen>
     <dimen name="subtext_size">15sp</dimen>
 
-    <dimen name="line_width">10dp</dimen>
+    <dimen name="line_width">8dp</dimen>
 </resources>
