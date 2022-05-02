@@ -1,9 +1,12 @@
 package com.example.dynamical
 
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import com.example.dynamical.databinding.MapFragmentBinding
 import com.google.android.gms.maps.GoogleMap
@@ -17,6 +20,8 @@ class MapFragment : Fragment(R.layout.map_fragment), OnMapReadyCallback {
     private lateinit var map: GoogleMap
     private var _position = LatLng(0.0, 0.0)
 
+    // TODO: make color dependent from theme
+    private var markerIcon: BitmapDescriptor? = null
     private var marker: Marker? = null
 
     var position: LatLng
@@ -26,15 +31,15 @@ class MapFragment : Fragment(R.layout.map_fragment), OnMapReadyCallback {
             updatePosition()
         }
 
-    private var _polyline: Polyline? = null
-    private val polyline get() = _polyline!!
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = MapFragmentBinding.inflate(inflater, container, false)
+        markerIcon = BitmapDescriptorFactory.fromBitmap(ResourcesCompat
+            .getDrawable(resources, R.drawable.position_dot, null)
+            !!.toBitmap())
 
         val mapView = childFragmentManager.findFragmentById(R.id.map_view) as SupportMapFragment
         mapView.getMapAsync(this)
@@ -45,7 +50,6 @@ class MapFragment : Fragment(R.layout.map_fragment), OnMapReadyCallback {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        _polyline = null
     }
 
     private fun updatePosition() {
@@ -53,17 +57,34 @@ class MapFragment : Fragment(R.layout.map_fragment), OnMapReadyCallback {
         // map.moveCamera(CameraUpdateFactory.newLatLng(position))
 
         marker?.remove()
-        marker = map.addMarker(MarkerOptions().position(position))
+        marker = map.addMarker(MarkerOptions()
+            .position(position)
+            .icon(markerIcon)
+            .anchor(0.5f, 0.5f)
+        )
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
         map.mapType = GoogleMap.MAP_TYPE_NORMAL
-        _polyline = map.addPolyline(PolylineOptions())
         updatePosition()
     }
 
-    fun updateRoute(points: List<LatLng>) {
-        polyline.points = points
+    // TODO: make color dependent from theme
+    fun newPolyline(): Polyline {
+        return map.addPolyline(PolylineOptions()).apply {
+            startCap = RoundCap()
+            endCap = RoundCap()
+            jointType = JointType.ROUND
+            width = resources.getDimension(R.dimen.line_width)
+            /* val typedValue = TypedValue()
+            requireContext().theme.resolveAttribute(
+                androidx.appcompat.R.attr.colorPrimary,
+                typedValue,
+                true
+            )
+            color = typedValue.data */
+            color = ResourcesCompat.getColor(resources, R.color.purple_500, null)
+        }
     }
 }

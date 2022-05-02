@@ -6,6 +6,7 @@ import com.example.dynamical.DynamicalApplication
 import com.example.dynamical.mesure.Stopwatch
 import com.example.dynamical.mesure.Tracker
 import com.example.dynamical.newtrack.service.TrackerService
+import com.google.android.gms.maps.model.Polyline
 
 class NewTrackPresenter(
     private val view: NewTrackView,
@@ -22,7 +23,7 @@ class NewTrackPresenter(
             if (distance < 1000.0f) view.setDistance("%.0fm".format(distance))
             else view.setDistance("%.1fkm".format(distance / 1000))
         }
-        tracker.route.observe(view.lifecycleOwner) { route -> view.drawRoute(route) }
+        tracker.route.observe(view.lifecycleOwner) { route -> polyline?.points = route }
 
         when (tracker.state) {
             Tracker.State.RUNNING -> view.onMeasureStart()
@@ -31,7 +32,10 @@ class NewTrackPresenter(
         }
     }
 
+    private var polyline: Polyline? = null
+
     private fun pauseMeasure() {
+        polyline = null
         tracker.stop()
         view.onMeasurePause()
     }
@@ -53,6 +57,7 @@ class NewTrackPresenter(
             application.startForegroundService(intent)
         }
 
+        polyline = view.getNewPolyline()
         tracker.start()
         view.onMeasureStart()
     }
@@ -69,6 +74,7 @@ class NewTrackPresenter(
             application.stopService(intent)
         }
 
+        polyline = null
         tracker.reset()
         view.onMeasureReset()
     }

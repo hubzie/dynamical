@@ -16,6 +16,7 @@ import com.example.dynamical.MapFragment
 import com.example.dynamical.R
 import com.example.dynamical.databinding.NewTrackFragmentBinding
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Polyline
 
 class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
     // Binding
@@ -27,7 +28,8 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
     private val presenter get() = _presenter!!
 
     // Map fragment
-    private val mapFragment = MapFragment()
+    private var _mapFragment: MapFragment? = null
+    private val mapFragment get() = _mapFragment!!
 
     // Interface implementation
     override val lifecycleOwner: LifecycleOwner = this
@@ -69,8 +71,8 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
         binding.distanceTextView.text = distance
     }
 
-    override fun drawRoute(points: List<LatLng>) {
-        mapFragment.updateRoute(points)
+    override fun getNewPolyline(): Polyline {
+        return mapFragment.newPolyline()
     }
 
 
@@ -107,6 +109,7 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
         binding.actionButton.setOnClickListener { presenter.onFlipState() }
         binding.resetButton.setOnClickListener { presenter.onReset() }
 
+        _mapFragment = MapFragment()
         mapFragment.position = LatLng(50.049683, 19.944544)
         with(requireActivity().supportFragmentManager.beginTransaction()) {
             replace(R.id.map_fragment_container, mapFragment)
@@ -118,7 +121,8 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _presenter = null
         _binding = null
+        _presenter = null
+        _mapFragment = null
     }
 }

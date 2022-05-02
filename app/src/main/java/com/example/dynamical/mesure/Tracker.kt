@@ -24,6 +24,9 @@ class Tracker(application: Application) {
     private val _distance = MutableLiveData<Float>()
     val distance: LiveData<Float> = _distance
 
+    var wholeRoute: List<List<LatLng>> = listOf()
+        private set
+
     private var previousLocation: Location? = null
 
     init {
@@ -54,6 +57,9 @@ class Tracker(application: Application) {
         stopwatch.stop()
         stepCounter.stop()
         gps.stop()
+
+        route.value?.let { wholeRoute = wholeRoute.plus(listOf(it)) }
+        _route.value = listOf()
     }
 
     fun reset() {
@@ -62,6 +68,8 @@ class Tracker(application: Application) {
         stepCounter.reset()
 
         _route.value = listOf()
+        wholeRoute = listOf()
+
         _distance.value = 0.0f
         previousLocation = null
     }
