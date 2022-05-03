@@ -117,7 +117,7 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
         binding.endButton.setOnClickListener { presenter.onEnd() }
 
         // Setup presenter when map become ready
-        _mapFragment = MapFragment {
+        _mapFragment = MapFragment(true) {
             _presenter = NewTrackPresenter(this, requireActivity().application as DynamicalApplication)
             presenter.initialize()
         }

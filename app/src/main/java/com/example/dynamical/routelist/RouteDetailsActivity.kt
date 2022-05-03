@@ -27,10 +27,11 @@ class RouteDetailsActivity : AppCompatActivity() {
     }
 
     private fun setup(route: Route) {
-        mapFragment = MapFragment {
+        mapFragment = MapFragment(false) {
             route.track?.let { track ->
                 for (part in track)
                     mapFragment.newPolyline().points = part
+                mapFragment.fitZoom()
             }
         }
 

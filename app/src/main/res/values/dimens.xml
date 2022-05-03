@@ -11,4 +11,9 @@
     <dimen name="subtext_size">15sp</dimen>
 
     <dimen name="line_width">8dp</dimen>
+
+    <dimen name="map_zoom_padding">50dp</dimen>
+
+    <dimen name="location_button_margin">10dp</dimen>
+    <dimen name="location_button_padding">10dp</dimen>
 </resources>

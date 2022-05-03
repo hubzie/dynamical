@@ -8,12 +8,14 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import com.example.dynamical.databinding.MapFragmentBinding
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 
-class MapFragment(private val onReadyCallback: (() -> Unit)?) :
+class MapFragment(private val doTrackPosition: Boolean, private val onReadyCallback: (() -> Unit)?) :
     Fragment(R.layout.map_fragment),
     OnMapReadyCallback
 {
@@ -27,6 +29,7 @@ class MapFragment(private val onReadyCallback: (() -> Unit)?) :
 
     private val polylineList: MutableList<Polyline> = mutableListOf()
 
+    private var followPosition = true
     var position: LatLng? = null
         set(value) {
             field = value
@@ -56,9 +59,34 @@ class MapFragment(private val onReadyCallback: (() -> Unit)?) :
         _binding = null
     }
 
+    override fun onMapReady(googleMap: GoogleMap) {
+        map = googleMap
+
+        // Configure interactions
+        if(doTrackPosition) {
+            binding.locationButton.setOnClickListener {
+                followPosition = true
+                updatePosition()
+                binding.locationButton.visibility = View.GONE
+            }
+            map.setOnCameraMoveStartedListener { reason ->
+                if (reason == REASON_GESTURE) {
+                    followPosition = false
+                    binding.locationButton.visibility = View.VISIBLE
+                }
+            }
+        }
+
+        map.mapType = GoogleMap.MAP_TYPE_NORMAL
+        updatePosition()
+        onReadyCallback?.invoke()
+    }
+
     private fun updatePosition() {
         if (!::map.isInitialized) return
-        // map.moveCamera(CameraUpdateFactory.newLatLng(position))
+
+        if (followPosition)
+            position?.let { map.animateCamera(CameraUpdateFactory.newLatLngZoom(it, 14.0f)) }
 
         marker?.remove()
         marker = if (position == null) null
@@ -70,17 +98,20 @@ class MapFragment(private val onReadyCallback: (() -> Unit)?) :
         )
     }
 
-    override fun onMapReady(googleMap: GoogleMap) {
-        map = googleMap
-        map.mapType = GoogleMap.MAP_TYPE_NORMAL
-        updatePosition()
-        onReadyCallback?.invoke()
-    }
-
     fun reset() {
         marker?.remove()
         polylineList.forEach { it.remove() }
         polylineList.clear()
+    }
+
+    fun fitZoom() {
+        val boundsBuilder = LatLngBounds.Builder()
+        for (polyline in polylineList)
+            for (point in polyline.points)
+                boundsBuilder.include(point)
+
+        val padding = (resources.getDimension(R.dimen.map_zoom_padding) / resources.displayMetrics.density).toInt()
+        map.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), padding))
     }
 
     // TODO: make color dependent from theme
