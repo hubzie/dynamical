@@ -116,15 +116,16 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
         binding.actionButton.setOnClickListener { presenter.onFlipState() }
         binding.endButton.setOnClickListener { presenter.onEnd() }
 
-        _mapFragment = MapFragment()
+        // Setup presenter when map become ready
+        _mapFragment = MapFragment {
+            _presenter = NewTrackPresenter(this, requireActivity().application as DynamicalApplication)
+            presenter.initialize()
+        }
+
         with(requireActivity().supportFragmentManager.beginTransaction()) {
             replace(R.id.map_fragment_container, mapFragment)
             commit()
         }
-
-        // Setup presenter
-        _presenter = NewTrackPresenter(this, requireActivity().application as DynamicalApplication)
-        presenter.initialize()
 
         return binding.root
     }

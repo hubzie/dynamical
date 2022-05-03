@@ -27,13 +27,13 @@ class Tracker(application: Application) {
     val time: LiveData<Long> get() = stopwatch.time
     val location: LiveData<Location> get() = gps.location
 
-    private val _route = MutableLiveData<List<LatLng>>()
-    val route: LiveData<List<LatLng>> = _route
+    private val _routePart = MutableLiveData<List<LatLng>>()
+    val routePart: LiveData<List<LatLng>> = _routePart
 
     private val _distance = MutableLiveData<Float>()
     val distance: LiveData<Float> = _distance
 
-    var wholeRoute: List<List<LatLng>> = listOf()
+    var route: List<List<LatLng>> = listOf()
         private set
 
     private var previousLocation: Location? = null
@@ -42,7 +42,7 @@ class Tracker(application: Application) {
         val location = LatLng(it.latitude, it.longitude)
         _distance.value = (_distance.value ?: 0.0f) + (previousLocation?.distanceTo(it) ?: 0.0f)
         previousLocation = it
-        _route.value = _route.value?.plus(location) ?: listOf(location)
+        _routePart.value = _routePart.value?.plus(location) ?: listOf(location)
     }
 
     enum class State {
@@ -64,6 +64,7 @@ class Tracker(application: Application) {
             stopwatch.start()
             stepCounter.start()
             gps.start()
+            previousLocation = null
             location.observeForever(locationObserver)
         }
     }
@@ -75,8 +76,8 @@ class Tracker(application: Application) {
             stepCounter.stop()
             location.removeObserver(locationObserver)
 
-            route.value?.let { wholeRoute = wholeRoute.plus(listOf(it)) }
-            _route.value = listOf()
+            routePart.value?.let { route = route.plus(listOf(it)) }
+            _routePart.value = listOf()
         }
     }
 
@@ -87,8 +88,8 @@ class Tracker(application: Application) {
         gps.stop()
         location.removeObserver(locationObserver)
 
-        _route.value = listOf()
-        wholeRoute = listOf()
+        _routePart.value = listOf()
+        route = listOf()
 
         _distance.value = 0.0f
         previousLocation = null

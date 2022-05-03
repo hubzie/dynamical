@@ -20,22 +20,25 @@ class RouteDetailsActivity : AppCompatActivity() {
     private lateinit var binding: RouteDetailsActivityBinding
     private lateinit var factory: RouteDetailsItemFactory
 
+    private lateinit var mapFragment: MapFragment
+
     private val routeViewModel: RouteViewModel by viewModels {
         RouteViewModelFactory((application as DynamicalApplication).repository)
     }
 
     private fun setup(route: Route) {
-        val mapFragment = MapFragment()
+        mapFragment = MapFragment {
+            route.track?.let { track ->
+                for (part in track)
+                    mapFragment.newPolyline().points = part
+            }
+        }
 
         with(supportFragmentManager.beginTransaction()) {
             replace(R.id.map_fragment_container, mapFragment)
             commit()
         }
 
-        route.track?.let { track ->
-            for (part in track)
-                mapFragment.newPolyline().points = part
-        }
         route.time.let { binding.dataList.addView(
                 factory.produce(getString(R.string.time_label, timeToString(it)))
         ) }

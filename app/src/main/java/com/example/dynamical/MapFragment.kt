@@ -13,7 +13,10 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 
-class MapFragment : Fragment(R.layout.map_fragment), OnMapReadyCallback {
+class MapFragment(private val onReadyCallback: (() -> Unit)?) :
+    Fragment(R.layout.map_fragment),
+    OnMapReadyCallback
+{
     private var _binding: MapFragmentBinding? = null
     private val binding get() = _binding!!
     private lateinit var map: GoogleMap
@@ -71,6 +74,7 @@ class MapFragment : Fragment(R.layout.map_fragment), OnMapReadyCallback {
         map = googleMap
         map.mapType = GoogleMap.MAP_TYPE_NORMAL
         updatePosition()
+        onReadyCallback?.invoke()
     }
 
     fun reset() {

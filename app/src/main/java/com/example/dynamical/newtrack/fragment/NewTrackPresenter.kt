@@ -2,6 +2,7 @@ package com.example.dynamical.newtrack.fragment
 
 import android.content.Intent
 import android.location.Location
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import com.example.dynamical.DynamicalApplication
@@ -35,20 +36,26 @@ class NewTrackPresenter(
             override fun onChanged(distance: Float) =
                 view.setDistance(Tracker.distanceToString(distance))
         })
-        tracker.route.observe(view.lifecycleOwner, object : Observer<List<LatLng>> {
-            override fun onChanged(route: List<LatLng>) { polyline?.points = route }
+        tracker.routePart.observe(view.lifecycleOwner, object : Observer<List<LatLng>> {
+            override fun onChanged(route: List<LatLng>) {
+                Log.d("Polyline", "${polyline}, $route")
+                polyline?.points = route
+            }
         })
         tracker.observableState.observe(view.lifecycleOwner, object : Observer<Tracker.State> {
             override fun onChanged(state: Tracker.State) {
                 when (state) {
-                    Tracker.State.RUNNING -> view.onMeasureStart()
+                    Tracker.State.RUNNING -> {
+                        polyline = view.getNewPolyline()
+                        view.onMeasureStart()
+                    }
                     Tracker.State.PAUSED -> view.onMeasurePause()
                     Tracker.State.STOPPED -> view.onMeasureReset()
                 }
             }
         })
 
-        for (route in tracker.wholeRoute)
+        for (route in tracker.route)
             view.getNewPolyline().points = route
     }
 
@@ -97,15 +104,14 @@ class NewTrackPresenter(
             tracker.stop()
 
             // Save track
+            val route = Route(
+                time = tracker.time.value ?: 0L,
+                stepCount = tracker.stepCount.value,
+                distance = tracker.distance.value,
+                track = tracker.route
+            )
             application.applicationScope.launch {
-                view.routeViewModel.insertRoute(
-                    Route(
-                        time = tracker.time.value ?: 0L,
-                        stepCount = tracker.stepCount.value,
-                        distance = tracker.distance.value,
-                        track = tracker.wholeRoute
-                    )
-                )
+                view.routeViewModel.insertRoute(route)
             }
         }
 
