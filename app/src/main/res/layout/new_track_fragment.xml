@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:src="@drawable/ic_baseline_play_arrow_24"
+        android:src="@drawable/start"
         app:layout_constraintBottom_toBottomOf="@id/map_fragment_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,11 +19,11 @@
         tools:ignore="ContentDescription" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/reset_button"
+        android:id="@+id/end_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:src="@drawable/ic_baseline_reset_24"
+        android:src="@drawable/stop"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@id/map_fragment_container"
         app:layout_constraintEnd_toEndOf="parent"

@@ -1,9 +1,7 @@
 package com.example.dynamical.routelist
 
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.MenuItem
-import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -14,10 +12,13 @@ import com.example.dynamical.data.Route
 import com.example.dynamical.data.RouteViewModel
 import com.example.dynamical.data.RouteViewModelFactory
 import com.example.dynamical.databinding.RouteDetailsActivityBinding
+import com.example.dynamical.mesure.Tracker.Companion.distanceToString
+import com.example.dynamical.mesure.Tracker.Companion.timeToString
 import kotlinx.coroutines.launch
 
 class RouteDetailsActivity : AppCompatActivity() {
     private lateinit var binding: RouteDetailsActivityBinding
+    private lateinit var factory: RouteDetailsItemFactory
 
     private val routeViewModel: RouteViewModel by viewModels {
         RouteViewModelFactory((application as DynamicalApplication).repository)
@@ -25,25 +26,34 @@ class RouteDetailsActivity : AppCompatActivity() {
 
     private fun setup(route: Route) {
         val mapFragment = MapFragment()
-        mapFragment.position = route.position
 
         with(supportFragmentManager.beginTransaction()) {
             replace(R.id.map_fragment_container, mapFragment)
             commit()
         }
 
-        val distanceInfo = TextView(this)
-        with(distanceInfo) {
-            text = "Distance: ${route.distance}"
-            setTextSize(TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.value_size))
+        route.track?.let { track ->
+            for (part in track)
+                mapFragment.newPolyline().points = part
         }
-        binding.dataList.addView(distanceInfo)
+        route.time.let { binding.dataList.addView(
+                factory.produce(getString(R.string.time_label, timeToString(it)))
+        ) }
+        route.stepCount?.let { binding.dataList.addView(
+            factory.produce(getString(R.string.step_count_label, it.toString()))
+        ) }
+        route.distance?.let { binding.dataList.addView(
+            factory.produce(getString(R.string.distance_label, distanceToString(it)))
+        ) }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = RouteDetailsActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        factory = RouteDetailsItemFactory(this)
 
         setTitle(R.string.route_details_title)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

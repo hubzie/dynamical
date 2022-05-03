@@ -23,24 +23,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="@dimen/margin">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/placeholder"
-                android:textSize="@dimen/value_size" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/placeholder"
-                android:textSize="@dimen/value_size" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/placeholder"
-                android:textSize="@dimen/value_size" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

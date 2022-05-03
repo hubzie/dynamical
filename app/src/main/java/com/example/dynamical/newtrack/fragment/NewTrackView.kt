@@ -2,9 +2,11 @@ package com.example.dynamical.newtrack.fragment
 
 import android.location.Location
 import androidx.lifecycle.LifecycleOwner
+import com.example.dynamical.data.RouteViewModel
 import com.google.android.gms.maps.model.Polyline
 
 interface NewTrackView {
+    val routeViewModel: RouteViewModel
     val lifecycleOwner: LifecycleOwner
 
     val locationPermission: Boolean

@@ -67,13 +67,10 @@ class TrackerService : LifecycleService() {
 
     private fun updateNotification() {
         val notification = createNotification(
-            getString(
-                R.string.notification_content,
-                stepCount.toString(),
-                timeToString(time),
-                distanceToString(distance)
+            getString(R.string.time_label, timeToString(time)) + "; " +
+                    getString(R.string.step_count_label, stepCount.toString()) + "; " +
+                    getString(R.string.distance_label, distanceToString(distance))
             )
-        )
         notificationManager.notify(DynamicalApplication.NOTIFICATION_ID, notification)
     }
 
@@ -89,12 +86,12 @@ class TrackerService : LifecycleService() {
         tracker = (application as DynamicalApplication).tracker
 
         pauseAction = NotificationCompat.Action(
-            R.drawable.ic_baseline_pause_24,
+            R.drawable.pause,
             getString(R.string.notification_pause_button),
             createPendingIntent(ACTION_PAUSE)
         )
         resumeAction = NotificationCompat.Action(
-            R.drawable.ic_baseline_play_arrow_24,
+            R.drawable.start,
             getString(R.string.notification_resume_button),
             createPendingIntent(ACTION_RESUME)
         )

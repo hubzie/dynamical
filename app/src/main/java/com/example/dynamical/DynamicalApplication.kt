@@ -17,7 +17,7 @@ class DynamicalApplication : Application() {
         const val NOTIFICATION_CHANNEL_ID = "Dynamical_notification_channel"
     }
 
-    private val applicationScope = CoroutineScope(SupervisorJob())
+    val applicationScope = CoroutineScope(SupervisorJob())
 
     private val database by lazy { RouteDatabase.getDatabase(this, applicationScope) }
     val repository by lazy { RouteRepository(database.routeDao()) }

@@ -15,8 +15,11 @@
 
     <string name="permission_denied_toast">Required permissions denied</string>
 
+    <string name="time_label">Time: %1$s</string>
+    <string name="step_count_label">Step count: %1$s</string>
+    <string name="distance_label">Distance: %1$s</string>
+
     <string name="notification_title">Dynamical</string>
-    <string name="notification_content">Time: %1$s; Step count: %2$s; Distance: %3$s</string>
     <string name="notification_pause_button">PAUSE</string>
     <string name="notification_resume_button">RESUME</string>
 

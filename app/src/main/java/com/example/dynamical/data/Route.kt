@@ -7,8 +7,10 @@ import com.google.android.gms.maps.model.LatLng
 
 @Entity(tableName = "route_table")
 data class Route(
-    @PrimaryKey val id: Int,
-    val distance: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val time: Long,
+    val stepCount: Int?,
+    val distance: Float?,
     @TypeConverters(RouteConverters::class)
-    val position: LatLng
+    val track: List<List<LatLng>>?
 )

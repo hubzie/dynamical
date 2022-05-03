@@ -4,23 +4,28 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.LifecycleOwner
 import com.example.dynamical.DynamicalApplication
 import com.example.dynamical.MapFragment
 import com.example.dynamical.R
+import com.example.dynamical.data.RouteViewModel
+import com.example.dynamical.data.RouteViewModelFactory
 import com.example.dynamical.databinding.NewTrackFragmentBinding
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
 
 class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
+    override val routeViewModel: RouteViewModel by viewModels {
+        RouteViewModelFactory((requireActivity().application as DynamicalApplication).repository)
+    }
+
     // Binding
     private var _binding: NewTrackFragmentBinding? = null
     private val binding get() = _binding!!
@@ -53,8 +58,10 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
         )
 
         requestCallback = callback
-        if (permission == PackageManager.PERMISSION_GRANTED) locationPermission = true
-        else requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        if (permission == PackageManager.PERMISSION_GRANTED) {
+            locationPermission = true
+            callback()
+        } else requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
 
@@ -80,18 +87,18 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
 
 
     override fun onMeasureStart() {
-        binding.actionButton.setImageResource(R.drawable.ic_baseline_pause_24)
-        binding.resetButton.visibility = View.VISIBLE
+        binding.actionButton.setImageResource(R.drawable.pause)
+        binding.endButton.visibility = View.VISIBLE
     }
 
     override fun onMeasurePause() {
-        binding.actionButton.setImageResource(R.drawable.ic_baseline_play_arrow_24)
-        binding.resetButton.visibility = View.VISIBLE
+        binding.actionButton.setImageResource(R.drawable.start)
+        binding.endButton.visibility = View.VISIBLE
     }
 
     override fun onMeasureReset() {
-        binding.actionButton.setImageResource(R.drawable.ic_baseline_play_arrow_24)
-        binding.resetButton.visibility = View.INVISIBLE
+        binding.actionButton.setImageResource(R.drawable.start)
+        binding.endButton.visibility = View.INVISIBLE
         mapFragment.reset()
     }
 
@@ -107,7 +114,7 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
 
         // Setup button
         binding.actionButton.setOnClickListener { presenter.onFlipState() }
-        binding.resetButton.setOnClickListener { presenter.onReset() }
+        binding.endButton.setOnClickListener { presenter.onEnd() }
 
         _mapFragment = MapFragment()
         with(requireActivity().supportFragmentManager.beginTransaction()) {

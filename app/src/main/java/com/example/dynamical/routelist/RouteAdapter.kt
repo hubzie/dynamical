@@ -11,12 +11,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.dynamical.R
 import com.example.dynamical.data.Route
 import com.example.dynamical.data.RouteDiff
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 
+// TODO: make map preview
 class RouteAdapter : ListAdapter<Route, RouteAdapter.ViewHolder>(RouteDiff()) {
     inner class ViewHolder(view: View) :
         RecyclerView.ViewHolder(view),
@@ -39,31 +39,28 @@ class RouteAdapter : ListAdapter<Route, RouteAdapter.ViewHolder>(RouteDiff()) {
             }
         }
 
-        private fun setMapLocation() {
+        /*private fun setMapLocation() {
             if (!::map.isInitialized) return
-            with(map) {
-                moveCamera(CameraUpdateFactory.newLatLngZoom(position, 10f))
-                mapType = GoogleMap.MAP_TYPE_NORMAL
-            }
-        }
+        }*/
 
         fun bind(idx: Int) {
             val route: Route = getItem(idx)
             id = route.id
 
-            "Distance: ${route.distance}m".also { text.text = it }
+            /*"Distance: ${route.distance}m".also { text.text = it }
             position = route.position
-            setMapLocation()
+            setMapLocation()*/
         }
 
         override fun onMapReady(googleMap: GoogleMap) {
             map = googleMap
+            map.mapType = GoogleMap.MAP_TYPE_NORMAL
             with(map.uiSettings) {
                 isMapToolbarEnabled = false
                 setAllGesturesEnabled(false)
             }
 
-            setMapLocation()
+            //setMapLocation()
 
             mapView.visibility = View.VISIBLE
             process.visibility = View.GONE

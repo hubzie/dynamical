@@ -6,10 +6,12 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import com.example.dynamical.DynamicalApplication
 import com.example.dynamical.R
+import com.example.dynamical.data.Route
 import com.example.dynamical.mesure.Tracker
 import com.example.dynamical.newtrack.service.TrackerService
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
+import kotlinx.coroutines.launch
 
 class NewTrackPresenter(
     private val view: NewTrackView,
@@ -87,11 +89,24 @@ class NewTrackPresenter(
         else startMeasure()
     }
 
-    fun onReset() {
+    fun onEnd() {
         // Delete notification
         if (tracker.state != Tracker.State.STOPPED) {
             val intent = Intent(application.applicationContext, TrackerService::class.java)
             application.stopService(intent)
+            tracker.stop()
+
+            // Save track
+            application.applicationScope.launch {
+                view.routeViewModel.insertRoute(
+                    Route(
+                        time = tracker.time.value ?: 0L,
+                        stepCount = tracker.stepCount.value,
+                        distance = tracker.distance.value,
+                        track = tracker.wholeRoute
+                    )
+                )
+            }
         }
 
         polyline = null
