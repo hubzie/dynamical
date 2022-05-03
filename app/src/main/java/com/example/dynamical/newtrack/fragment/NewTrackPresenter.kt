@@ -58,16 +58,18 @@ class NewTrackPresenter(
         view.onMeasurePause()
     }
 
-    private fun startMeasure() {
+    private fun startMeasure(askForPermission: Boolean = true) {
         // Create notification
         if (tracker.state == Tracker.State.STOPPED) {
-            if (!view.locationPermission) view.requestPermission()
             if (!view.locationPermission) {
-                Toast.makeText(
-                    application.applicationContext,
-                    application.applicationContext.getString(R.string.permission_denied_toast),
-                    Toast.LENGTH_LONG
-                ).show()
+                if (askForPermission) view.requestPermission { startMeasure(false) }
+                else {
+                    Toast.makeText(
+                        application.applicationContext,
+                        application.applicationContext.getString(R.string.permission_denied_toast),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
                 return
             }
 

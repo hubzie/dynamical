@@ -8,7 +8,7 @@ interface NewTrackView {
     val lifecycleOwner: LifecycleOwner
 
     val locationPermission: Boolean
-    fun requestPermission()
+    fun requestPermission(callback: () -> Unit)
 
     fun setTime(time: String)
     fun setStepCount(stepCount: String)

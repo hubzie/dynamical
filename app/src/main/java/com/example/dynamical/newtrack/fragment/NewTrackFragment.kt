@@ -4,9 +4,11 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -35,21 +37,22 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
     override val lifecycleOwner: LifecycleOwner = this
 
 
-    // TODO: wait for activity result before reading
     override var locationPermission: Boolean = false
         private set
-
+    private var requestCallback: (() -> Unit)? = null
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             locationPermission = it
+            requestCallback?.invoke()
         }
 
-    override fun requestPermission() {
+    override fun requestPermission(callback: () -> Unit) {
         val permission = ContextCompat.checkSelfPermission(
             requireContext(),
             Manifest.permission.ACCESS_FINE_LOCATION
         )
 
+        requestCallback = callback
         if (permission == PackageManager.PERMISSION_GRANTED) locationPermission = true
         else requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
     }
