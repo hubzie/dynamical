@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="clock_interval">100</integer>
+    <integer name="clock_interval">1000</integer>
 
     <integer name="GPS_interval">10000</integer>
     <integer name="GPS_fastest_interval">10000</integer>

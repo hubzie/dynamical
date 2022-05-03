@@ -13,7 +13,12 @@
 
     <string name="route_details_title">Route details</string>
 
+    <string name="permission_denied_toast">Required permissions denied</string>
+
     <string name="notification_title">Dynamical</string>
+    <string name="notification_content">Time: %1$s; Step count: %2$s; Distance: %3$s</string>
+    <string name="notification_pause_button">PAUSE</string>
+    <string name="notification_resume_button">RESUME</string>
 
     <string name="EXTRA_ROUTE_ID">com.example.dynamical.extra.ROUTE_ID</string>
 </resources>

@@ -1,11 +1,14 @@
 package com.example.dynamical.newtrack.fragment
 
 import android.content.Intent
+import android.location.Location
 import android.widget.Toast
+import androidx.lifecycle.Observer
 import com.example.dynamical.DynamicalApplication
-import com.example.dynamical.mesure.Stopwatch
+import com.example.dynamical.R
 import com.example.dynamical.mesure.Tracker
 import com.example.dynamical.newtrack.service.TrackerService
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
 
 class NewTrackPresenter(
@@ -15,23 +18,36 @@ class NewTrackPresenter(
     private val tracker: Tracker = application.tracker
 
     fun initialize() {
-        tracker.time.observe(view.lifecycleOwner) { time -> view.setTime(Stopwatch.timeToString(time)) }
-        tracker.stepCount.observe(view.lifecycleOwner) { stepCount -> view.setStepCount("$stepCount") }
-        tracker.location.observe(view.lifecycleOwner) { location -> view.setLocation(location) }
-        tracker.distance.observe(view.lifecycleOwner) { distance ->
-            if (distance < 1000.0f) view.setDistance("%.0fm".format(distance))
-            else view.setDistance("%.1fkm".format(distance / 1000))
-        }
-        tracker.route.observe(view.lifecycleOwner) { route -> polyline?.points = route }
+        // Some random stuff happens here, so objects are required instead of lambdas
+        // https://stackoverflow.com/questions/47025233/android-lifecycle-library-cannot-add-the-same-observer-with-different-lifecycle
+        tracker.time.observe(view.lifecycleOwner, object : Observer<Long> {
+            override fun onChanged(time : Long) = view.setTime(Tracker.timeToString(time))
+        })
+        tracker.stepCount.observe(view.lifecycleOwner, object : Observer<Int> {
+            override fun onChanged(stepCount: Int) = view.setStepCount("$stepCount")
+        })
+        tracker.location.observe(view.lifecycleOwner, object : Observer<Location> {
+            override fun onChanged(location: Location) = view.setLocation(location)
+        })
+        tracker.distance.observe(view.lifecycleOwner, object : Observer<Float> {
+            override fun onChanged(distance: Float) =
+                view.setDistance(Tracker.distanceToString(distance))
+        })
+        tracker.route.observe(view.lifecycleOwner, object : Observer<List<LatLng>> {
+            override fun onChanged(route: List<LatLng>) { polyline?.points = route }
+        })
+        tracker.observableState.observe(view.lifecycleOwner, object : Observer<Tracker.State> {
+            override fun onChanged(state: Tracker.State) {
+                when (state) {
+                    Tracker.State.RUNNING -> view.onMeasureStart()
+                    Tracker.State.PAUSED -> view.onMeasurePause()
+                    Tracker.State.STOPPED -> view.onMeasureReset()
+                }
+            }
+        })
 
         for (route in tracker.wholeRoute)
             view.getNewPolyline().points = route
-
-        when (tracker.state) {
-            Tracker.State.RUNNING -> view.onMeasureStart()
-            Tracker.State.PAUSED -> view.onMeasurePause()
-            Tracker.State.STOPPED -> view.onMeasureReset()
-        }
     }
 
     private var polyline: Polyline? = null
@@ -49,7 +65,7 @@ class NewTrackPresenter(
             if (!view.locationPermission) {
                 Toast.makeText(
                     application.applicationContext,
-                    "Required permissions denied",
+                    application.applicationContext.getString(R.string.permission_denied_toast),
                     Toast.LENGTH_LONG
                 ).show()
                 return

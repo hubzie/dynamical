@@ -33,7 +33,16 @@
             android:name=".newtrack.service.TrackerService"
             android:enabled="true"
             android:exported="false"
-            android:foregroundServiceType="location" />
+            android:foregroundServiceType="location">
+        </service>
+        <receiver
+            android:name=".newtrack.service.TrackerService$Receiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.example.dynamical.service.PAUSE" />
+                <action android:name="com.example.dynamical.service.RESUME" />
+            </intent-filter>
+        </receiver>
 
         <activity
             android:name=".MainActivity"

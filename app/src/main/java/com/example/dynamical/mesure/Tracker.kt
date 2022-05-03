@@ -4,11 +4,20 @@ import android.app.Application
 import android.content.Context
 import android.hardware.SensorManager
 import android.location.Location
+import android.text.format.DateUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.maps.model.LatLng
 
 class Tracker(application: Application) {
+    companion object {
+        fun timeToString(time: Long): String = DateUtils.formatElapsedTime(time / 1000)
+        fun distanceToString(distance: Float): String {
+            return if (distance < 1000.0f) "%.0fm".format(distance)
+            else "%.1fkm".format(distance / 1000)
+        }
+    }
+
     private val stepCounter =
         StepCounter(application.getSystemService(Context.SENSOR_SERVICE) as SensorManager)
     private val stopwatch = Stopwatch(application)
@@ -41,24 +50,34 @@ class Tracker(application: Application) {
     }
 
     var state: State = State.STOPPED
-        private set
+        private set(value) {
+            field = value
+            _observableState.value = field
+        }
+
+    private val _observableState = MutableLiveData<State>()
+    val observableState: LiveData<State> = _observableState
 
     fun start() {
-        state = State.RUNNING
-        stopwatch.start()
-        stepCounter.start()
-        gps.start()
-        location.observeForever(locationObserver)
+        if (state != State.RUNNING) {
+            state = State.RUNNING
+            stopwatch.start()
+            stepCounter.start()
+            gps.start()
+            location.observeForever(locationObserver)
+        }
     }
 
     fun stop() {
-        state = State.PAUSED
-        stopwatch.stop()
-        stepCounter.stop()
-        location.removeObserver(locationObserver)
+        if (state == State.RUNNING) {
+            state = State.PAUSED
+            stopwatch.stop()
+            stepCounter.stop()
+            location.removeObserver(locationObserver)
 
-        route.value?.let { wholeRoute = wholeRoute.plus(listOf(it)) }
-        _route.value = listOf()
+            route.value?.let { wholeRoute = wholeRoute.plus(listOf(it)) }
+            _route.value = listOf()
+        }
     }
 
     fun reset() {
@@ -66,6 +85,7 @@ class Tracker(application: Application) {
         stopwatch.reset()
         stepCounter.reset()
         gps.stop()
+        location.removeObserver(locationObserver)
 
         _route.value = listOf()
         wholeRoute = listOf()

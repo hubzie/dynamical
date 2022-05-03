@@ -2,16 +2,11 @@ package com.example.dynamical.mesure
 
 import android.app.Application
 import android.os.CountDownTimer
-import android.text.format.DateUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.dynamical.R
 
 class Stopwatch(application: Application) {
-    companion object {
-        fun timeToString(time: Long): String = DateUtils.formatElapsedTime(time / 1000)
-    }
-
     // Clock
     private val clock = object : CountDownTimer(
         Long.MAX_VALUE,
