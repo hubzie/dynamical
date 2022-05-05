@@ -6,12 +6,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.dynamical.DynamicalApplication
-import com.example.dynamical.MapFragment
 import com.example.dynamical.R
 import com.example.dynamical.data.Route
 import com.example.dynamical.data.RouteViewModel
 import com.example.dynamical.data.RouteViewModelFactory
 import com.example.dynamical.databinding.RouteDetailsActivityBinding
+import com.example.dynamical.maps.MapFragment
 import com.example.dynamical.mesure.Tracker.Companion.distanceToString
 import com.example.dynamical.mesure.Tracker.Companion.timeToString
 import kotlinx.coroutines.launch

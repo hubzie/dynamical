@@ -1,16 +1,16 @@
 package com.example.dynamical.mesure
 
-import android.app.Application
 import android.os.CountDownTimer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.dynamical.DynamicalApplication
 import com.example.dynamical.R
 
-class Stopwatch(application: Application) {
+class Stopwatch {
     // Clock
     private val clock = object : CountDownTimer(
         Long.MAX_VALUE,
-        application.resources.getInteger(R.integer.clock_interval).toLong()
+        DynamicalApplication.mResources.getInteger(R.integer.clock_interval).toLong()
     ) {
         override fun onTick(p0: Long) = update()
         override fun onFinish() {}

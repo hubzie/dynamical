@@ -28,9 +28,9 @@ class TrackerService : LifecycleService() {
     private lateinit var notificationManager: NotificationManager
     private var isRunning = false
 
-    private var stepCount = 0
-    private var time = 0L
-    private var distance = 0.0f
+    private var time: Long = 0L
+    private var stepCount: Int? = null
+    private var distance: Float? = null
 
     private lateinit var pauseAction: NotificationCompat.Action
     private lateinit var resumeAction: NotificationCompat.Action
@@ -64,11 +64,10 @@ class TrackerService : LifecycleService() {
     }
 
     private fun updateNotification() {
-        val notification = createNotification(
-            getString(R.string.time_label, timeToString(time)) + "; " +
-                    getString(R.string.step_count_label, stepCount.toString()) + "; " +
-                    getString(R.string.distance_label, distanceToString(distance))
-            )
+        val text = getString(R.string.time_label, timeToString(time)) +
+                (stepCount?.let{ "; " + getString(R.string.step_count_label, it.toString()) } ?: "") +
+                (distance?.let{ "; " + getString(R.string.distance_label, distanceToString(it)) } ?: "")
+        val notification = createNotification(text)
         notificationManager.notify(DynamicalApplication.NOTIFICATION_ID, notification)
     }
 

@@ -25,15 +25,20 @@ class NewTrackPresenter(
         tracker.time.observe(view.lifecycleOwner, object : Observer<Long> {
             override fun onChanged(time : Long) = view.setTime(Tracker.timeToString(time))
         })
-        tracker.stepCount.observe(view.lifecycleOwner, object : Observer<Int> {
-            override fun onChanged(stepCount: Int) = view.setStepCount("$stepCount")
+        tracker.stepCount.observe(view.lifecycleOwner, object : Observer<Int?> {
+            override fun onChanged(stepCount: Int?) {
+                stepCount?.let { view.setStepCount(it.toString()) }
+                    ?: view.hideStepCount()
+            }
         })
         tracker.location.observe(view.lifecycleOwner, object : Observer<Location> {
             override fun onChanged(location: Location) = view.setLocation(location)
         })
-        tracker.distance.observe(view.lifecycleOwner, object : Observer<Float> {
-            override fun onChanged(distance: Float) =
-                view.setDistance(Tracker.distanceToString(distance))
+        tracker.distance.observe(view.lifecycleOwner, object : Observer<Float?> {
+            override fun onChanged(distance: Float?) {
+                distance?.let { view.setDistance(Tracker.distanceToString(it)) }
+                    ?: view.hideDistance()
+            }
         })
         tracker.routePart.observe(view.lifecycleOwner, object : Observer<List<LatLng>> {
             override fun onChanged(route: List<LatLng>) {

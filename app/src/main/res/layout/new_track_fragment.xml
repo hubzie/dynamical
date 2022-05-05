@@ -48,68 +48,89 @@
         app:layout_constraintTop_toBottomOf="@id/map_fragment_container">
 
         <LinearLayout
-            android:id="@+id/time_layout"
+            android:id="@+id/left_layout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginEnd="@dimen/margin"
             android:orientation="vertical"
-            app:layout_constraintEnd_toStartOf="@+id/step_counter_layout"
+            app:layout_constraintEnd_toStartOf="@+id/right_layout"
             app:layout_constraintStart_toStartOf="parent">
 
-            <TextView
+            <LinearLayout
+                android:id="@+id/time_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/stopwatch_title"
-                android:textSize="@dimen/title_size" />
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/time_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/placeholder"
-                android:textSize="@dimen/text_size" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/stopwatch_title"
+                    android:textSize="@dimen/title_size" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/distance_title"
-                android:textSize="@dimen/title_size" />
+                <TextView
+                    android:id="@+id/time_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/placeholder"
+                    android:textSize="@dimen/text_size" />
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/distance_text_view"
+            <LinearLayout
+                android:id="@+id/distance_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/placeholder"
-                android:textSize="@dimen/text_size" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/distance_title"
+                    android:textSize="@dimen/title_size" />
+
+                <TextView
+                    android:id="@+id/distance_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/placeholder"
+                    android:textSize="@dimen/text_size" />
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/step_counter_layout"
+            android:id="@+id/right_layout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginStart="@dimen/margin"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/time_layout">
+            app:layout_constraintStart_toEndOf="@id/left_layout">
 
-            <TextView
+            <LinearLayout
+                android:id="@+id/step_count_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/step_counter_title"
-                android:textSize="@dimen/title_size" />
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/step_count_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/placeholder"
-                android:textSize="@dimen/text_size" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/step_counter_title"
+                    android:textSize="@dimen/title_size" />
+
+                <TextView
+                    android:id="@+id/step_count_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/placeholder"
+                    android:textSize="@dimen/text_size" />
+            </LinearLayout>
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

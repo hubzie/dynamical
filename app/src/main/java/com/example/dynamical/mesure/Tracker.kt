@@ -20,18 +20,18 @@ class Tracker(application: Application) {
 
     private val stepCounter =
         StepCounter(application.getSystemService(Context.SENSOR_SERVICE) as SensorManager)
-    private val stopwatch = Stopwatch(application)
+    private val stopwatch = Stopwatch()
     private val gps = GPS(application)
 
-    val stepCount: LiveData<Int> get() = stepCounter.stepCount
+    val stepCount: LiveData<Int?> get() = stepCounter.stepCount
     val time: LiveData<Long> get() = stopwatch.time
     val location: LiveData<Location> get() = gps.location
 
     private val _routePart = MutableLiveData<List<LatLng>>()
     val routePart: LiveData<List<LatLng>> = _routePart
 
-    private val _distance = MutableLiveData<Float>()
-    val distance: LiveData<Float> = _distance
+    private val _distance = MutableLiveData<Float?>()
+    val distance: LiveData<Float?> = _distance
 
     var route: List<List<LatLng>> = listOf()
         private set
@@ -94,7 +94,7 @@ class Tracker(application: Application) {
         _routePart.value = listOf()
         route = listOf()
 
-        _distance.value = 0.0f
+        _distance.value = null
         previousLocation = null
     }
 }

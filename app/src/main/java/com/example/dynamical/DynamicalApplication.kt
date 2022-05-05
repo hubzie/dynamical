@@ -4,6 +4,7 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.res.Resources
 import com.example.dynamical.data.RouteDatabase
 import com.example.dynamical.data.RouteRepository
 import com.example.dynamical.mesure.Tracker
@@ -15,6 +16,7 @@ class DynamicalApplication : Application() {
     companion object {
         const val NOTIFICATION_ID = 1835 // Some random number
         const val NOTIFICATION_CHANNEL_ID = "Dynamical_notification_channel"
+        lateinit var mResources: Resources
     }
 
     val applicationScope = CoroutineScope(SupervisorJob())
@@ -26,6 +28,8 @@ class DynamicalApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        mResources = resources
 
         // Create notification channel
         val channel = NotificationChannel(

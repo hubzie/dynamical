@@ -13,11 +13,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LifecycleOwner
 import com.example.dynamical.DynamicalApplication
-import com.example.dynamical.MapFragment
 import com.example.dynamical.R
 import com.example.dynamical.data.RouteViewModel
 import com.example.dynamical.data.RouteViewModelFactory
 import com.example.dynamical.databinding.NewTrackFragmentBinding
+import com.example.dynamical.maps.MapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
 
@@ -71,6 +71,7 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
 
     override fun setStepCount(stepCount: String) {
         binding.stepCountTextView.text = stepCount
+        binding.stepCountInfo.visibility = View.VISIBLE
     }
 
     override fun setLocation(location: Location) {
@@ -79,6 +80,7 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
 
     override fun setDistance(distance: String) {
         binding.distanceTextView.text = distance
+        binding.distanceInfo.visibility = View.VISIBLE
     }
 
     override fun getNewPolyline(): Polyline {
@@ -86,7 +88,17 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
     }
 
 
+    override fun hideStepCount() {
+        binding.stepCountInfo.visibility = View.GONE
+    }
+
+    override fun hideDistance() {
+        binding.distanceInfo.visibility = View.GONE
+    }
+
+
     override fun onMeasureStart() {
+        binding.timeInfo.visibility = View.VISIBLE
         binding.actionButton.setImageResource(R.drawable.pause)
         binding.endButton.visibility = View.VISIBLE
     }
@@ -97,6 +109,7 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
     }
 
     override fun onMeasureReset() {
+        binding.timeInfo.visibility = View.GONE
         binding.actionButton.setImageResource(R.drawable.start)
         binding.endButton.visibility = View.INVISIBLE
         mapFragment.reset()
@@ -111,6 +124,11 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
     ): View {
         // Setup binding
         _binding = NewTrackFragmentBinding.inflate(layoutInflater, container, false)
+
+        // Setup visibility
+        binding.timeInfo.visibility = View.GONE
+        binding.distanceInfo.visibility = View.GONE
+        binding.stepCountInfo.visibility = View.GONE
 
         // Setup button
         binding.actionButton.setOnClickListener { presenter.onFlipState() }

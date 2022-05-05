@@ -15,14 +15,16 @@ class StepCounter(private val sensorManager: SensorManager) : SensorEventListene
     // Auxiliary variables
     private var startStep: Int? = null
     private var lastStep: Int = 0
-    private var stepsBeforeStart: Int = 0
+    private var stepsBeforeStart: Int? = null
 
     // Step count
-    private val _stepCount = MutableLiveData<Int>()
-    val stepCount: LiveData<Int> = _stepCount
+    private val _stepCount = MutableLiveData<Int?>()
+    val stepCount: LiveData<Int?> = _stepCount
 
     private fun update() {
-        _stepCount.value = stepsBeforeStart + lastStep - (startStep ?: lastStep)
+        _stepCount.value = stepsBeforeStart?.let {
+            it + lastStep - (startStep ?: lastStep)
+        }
     }
 
     // Start step counter
@@ -38,16 +40,19 @@ class StepCounter(private val sensorManager: SensorManager) : SensorEventListene
 
     // Stop step counter
     fun stop() {
-        stepsBeforeStart += lastStep - (startStep ?: lastStep)
+        stepsBeforeStart = (stepsBeforeStart ?: 0) + lastStep - (startStep ?: lastStep)
+        if (stepsBeforeStart == 0) stepsBeforeStart = null
+
         lastStep = (startStep ?: lastStep)
         sensorManager.unregisterListener(this)
+
         update()
     }
 
     // Reset step counter
     fun reset() {
-        stop()
-        stepsBeforeStart = 0
+        sensorManager.unregisterListener(this)
+        stepsBeforeStart = null
         update()
     }
 

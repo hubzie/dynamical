@@ -8,16 +8,18 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dynamical.R
 import com.example.dynamical.data.Route
 import com.example.dynamical.data.RouteDiff
+import com.example.dynamical.maps.PolylineFactory
 import com.example.dynamical.mesure.Tracker
-import com.google.android.gms.maps.*
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.PolylineOptions
 
 class RouteAdapter : ListAdapter<Route, RouteAdapter.ViewHolder>(RouteDiff()) {
     inner class ViewHolder(private val view: View) :
@@ -60,14 +62,9 @@ class RouteAdapter : ListAdapter<Route, RouteAdapter.ViewHolder>(RouteDiff()) {
             if(!::map.isInitialized || !::route.isInitialized) return
 
             route.track?.let { track ->
-                val resources = view.resources
-
                 // Draw
                 for (part in track)
-                    map.addPolyline(PolylineOptions()).apply {
-                        color = ResourcesCompat.getColor(resources, R.color.purple_500, null)
-                        points = part
-                    }
+                    PolylineFactory.createPolyline(map).points = part
 
                 // Zoom
                 val boundsBuilder = LatLngBounds.Builder()
@@ -127,6 +124,11 @@ class RouteAdapter : ListAdapter<Route, RouteAdapter.ViewHolder>(RouteDiff()) {
             intent.putExtra(view.context.getString(R.string.EXTRA_ROUTE_ID), route.id)
             view.context.startActivity(intent)
         }
+
+        fun clear() {
+            map.clear()
+            description.removeAllViews()
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -137,5 +139,10 @@ class RouteAdapter : ListAdapter<Route, RouteAdapter.ViewHolder>(RouteDiff()) {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(position)
+    }
+
+    override fun onViewRecycled(holder: ViewHolder) {
+        super.onViewRecycled(holder)
+        holder.clear()
     }
 }

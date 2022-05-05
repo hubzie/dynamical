@@ -1,4 +1,4 @@
-package com.example.dynamical
+package com.example.dynamical.maps
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
+import com.example.dynamical.R
 import com.example.dynamical.databinding.MapFragmentBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -120,14 +121,7 @@ class MapFragment(private val doTrackPosition: Boolean, private val onReadyCallb
     }
 
     fun newPolyline(): Polyline {
-        val polyline = map.addPolyline(PolylineOptions()).apply {
-            startCap = RoundCap()
-            endCap = RoundCap()
-            jointType = JointType.ROUND
-            width = resources.getDimension(R.dimen.line_width)
-            color = ResourcesCompat.getColor(resources, R.color.purple_500, null)
-        }
-
+        val polyline = PolylineFactory.createPolyline(map)
         polylineList.add(polyline)
         return polyline
     }
