@@ -21,7 +21,7 @@ class Tracker(application: Application) {
     private val stepCounter =
         StepCounter(application.getSystemService(Context.SENSOR_SERVICE) as SensorManager)
     private val stopwatch = Stopwatch()
-    private val gps = GPS()
+    private val gps = GPS(application)
 
     val stepCount: LiveData<Int?> get() = stepCounter.stepCount
     val time: LiveData<Long> get() = stopwatch.time
@@ -60,19 +60,12 @@ class Tracker(application: Application) {
     private val _observableState = MutableLiveData<State>()
     val observableState: LiveData<State> = _observableState
 
-    var gpsContext: Context? = null
-        set(value) {
-            field = value
-            if (state == State.RUNNING && value != null)
-                gps.start(value)
-        }
-
     fun start() {
         if (state != State.RUNNING) {
             state = State.RUNNING
             stopwatch.start()
             stepCounter.start()
-            gpsContext?.let { gps.start(it) }
+            gps.start()
             previousLocation = null
             location.observeForever(locationObserver)
         }
@@ -105,7 +98,5 @@ class Tracker(application: Application) {
 
         _distance.value = null
         previousLocation = null
-
-        gpsContext = null
     }
 }

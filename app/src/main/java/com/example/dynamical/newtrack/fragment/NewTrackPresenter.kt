@@ -1,11 +1,7 @@
 package com.example.dynamical.newtrack.fragment
 
-import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
 import android.location.Location
-import android.os.IBinder
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import com.example.dynamical.DynamicalApplication
@@ -24,17 +20,6 @@ class NewTrackPresenter(
     private val tracker = application.tracker
 
     private var polyline: Polyline? = null
-
-    private val connection = object : ServiceConnection {
-        override fun onServiceConnected(className: ComponentName, binder: IBinder) {
-            tracker.gpsContext = (binder as TrackerService.TrackerBinder).serviceContext
-        }
-
-        override fun onServiceDisconnected(className: ComponentName) {
-            tracker.gpsContext = null
-        }
-    }
-    private var isBonded = false
 
     fun initialize() {
         // Some random stuff happens here, so objects are required instead of lambdas
@@ -102,7 +87,6 @@ class NewTrackPresenter(
 
             Intent(application.applicationContext, TrackerService::class.java).also { intent ->
                 application.startForegroundService(intent)
-                isBonded = application.bindService(intent, connection, Context.BIND_AUTO_CREATE)
             }
         }
 
@@ -119,11 +103,6 @@ class NewTrackPresenter(
     fun onEnd() {
         // Delete notification
         if (tracker.state != Tracker.State.STOPPED) {
-            if(isBonded) {
-                application.unbindService(connection)
-                isBonded = false
-            }
-
             Intent(application.applicationContext, TrackerService::class.java).also { intent ->
                 application.stopService(intent)
             }

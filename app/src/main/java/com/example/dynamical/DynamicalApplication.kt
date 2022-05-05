@@ -54,7 +54,9 @@ class DynamicalApplication : Application() {
             NOTIFICATION_CHANNEL_ID,
             "Dynamical notification channel",
             NotificationManager.IMPORTANCE_DEFAULT
-        )
+        ).apply {
+            setSound(null, null)
+        }
         (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
             .createNotificationChannel(channel)
     }

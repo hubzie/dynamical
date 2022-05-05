@@ -7,10 +7,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.dynamical.DynamicalApplication
 import com.example.dynamical.R
-import com.google.android.gms.location.*
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
 
-class GPS : LocationCallback() {
-    private var fusedLocationClient: FusedLocationProviderClient? = null
+class GPS(context: Context) : LocationCallback() {
+    private var fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
     private val _location = MutableLiveData<Location?>()
     val location: LiveData<Location?> = _location
@@ -27,11 +30,8 @@ class GPS : LocationCallback() {
         priority = LocationRequest.PRIORITY_HIGH_ACCURACY
     }
 
-    fun start(context: Context) {
-        if(fusedLocationClient == null)
-            fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-
-        fusedLocationClient?.requestLocationUpdates(
+    fun start() {
+        fusedLocationClient.requestLocationUpdates(
             request,
             this,
             Looper.getMainLooper()
@@ -39,8 +39,7 @@ class GPS : LocationCallback() {
     }
 
     fun reset() {
-        fusedLocationClient?.removeLocationUpdates(this)
-        fusedLocationClient = null
+        fusedLocationClient.removeLocationUpdates(this)
         _location.value = null
     }
 }

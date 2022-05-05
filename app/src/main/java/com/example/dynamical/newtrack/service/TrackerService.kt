@@ -1,14 +1,11 @@
 package com.example.dynamical.newtrack.service
 
-import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.Binder
-import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.navigation.NavDeepLinkBuilder
@@ -47,17 +44,6 @@ class TrackerService : LifecycleService() {
                 ACTION_RESUME -> tracker.start()
             }
         }
-    }
-
-    inner class TrackerBinder : Binder() {
-        val serviceContext: Context = this@TrackerService
-    }
-
-    private val binder = TrackerBinder()
-
-    @SuppressLint("MissingSuperCall")
-    override fun onBind(intent: Intent): IBinder {
-        return binder
     }
 
     private fun createPendingIntent(action: String): PendingIntent {
@@ -118,6 +104,7 @@ class TrackerService : LifecycleService() {
                 .setContentTitle(getString(R.string.notification_title))
                 .setSmallIcon(R.mipmap.ic_launcher_round)
                 .setContentIntent(onClickPendingIntent)
+                .setOnlyAlertOnce(true)
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
 
@@ -153,6 +140,11 @@ class TrackerService : LifecycleService() {
 
     override fun onDestroy() {
         super.onDestroy()
+        // Close notification
+        tracker.time.removeObservers(this)
+        tracker.stepCount.removeObservers(this)
+        tracker.distance.removeObservers(this)
+        tracker.observableState.removeObservers(this)
         notificationManager.cancel(DynamicalApplication.NOTIFICATION_ID)
     }
 
