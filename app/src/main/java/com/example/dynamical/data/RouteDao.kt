@@ -1,9 +1,6 @@
 package com.example.dynamical.data
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -16,6 +13,9 @@ interface RouteDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertRoute(route: Route)
+
+    @Delete
+    suspend fun deleteRoute(route: Route)
 
     @Query("delete from route_table")
     suspend fun clear()

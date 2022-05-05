@@ -23,5 +23,8 @@
     <string name="notification_pause_button">PAUSE</string>
     <string name="notification_resume_button">RESUME</string>
 
+    <string name="delete_route">Delete</string>
+    <string name="follow_route">Follow</string>
+
     <string name="EXTRA_ROUTE_ID">com.example.dynamical.extra.ROUTE_ID</string>
 </resources>

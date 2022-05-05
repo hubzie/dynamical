@@ -11,7 +11,6 @@ import com.example.dynamical.mesure.Tracker
 import com.example.dynamical.newtrack.service.TrackerService
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
-import kotlinx.coroutines.launch
 
 class NewTrackPresenter(
     private val view: NewTrackView,
@@ -113,9 +112,7 @@ class NewTrackPresenter(
                 distance = tracker.distance.value,
                 track = tracker.route
             )
-            application.applicationScope.launch {
-                view.routeViewModel.insertRoute(route)
-            }
+            view.routeViewModel.insertRoute(route)
         }
 
         polyline = null

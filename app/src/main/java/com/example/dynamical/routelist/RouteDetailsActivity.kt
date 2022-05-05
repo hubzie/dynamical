@@ -1,6 +1,7 @@
 package com.example.dynamical.routelist
 
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -22,11 +23,15 @@ class RouteDetailsActivity : AppCompatActivity() {
 
     private lateinit var mapFragment: MapFragment
 
+    private lateinit var route: Route
+
     private val routeViewModel: RouteViewModel by viewModels {
         RouteViewModelFactory((application as DynamicalApplication).repository)
     }
 
     private fun setup(route: Route) {
+        this.route = route
+
         mapFragment = MapFragment(false) {
             route.track?.let { track ->
                 for (part in track)
@@ -66,9 +71,19 @@ class RouteDetailsActivity : AppCompatActivity() {
         lifecycleScope.launch { setup(routeViewModel.getRouteDetails(id)) }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.route_details_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
+                finish()
+                true
+            }
+            R.id.delete_route -> {
+                routeViewModel.deleteRoute(route)
                 finish()
                 true
             }

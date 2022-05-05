@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dynamical.R
 import com.example.dynamical.data.Route
-import com.example.dynamical.data.RouteDiff
 import com.example.dynamical.maps.PolylineFactory
 import com.example.dynamical.mesure.Tracker
 import com.google.android.gms.maps.CameraUpdateFactory
