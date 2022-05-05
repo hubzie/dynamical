@@ -77,8 +77,8 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
         binding.stepCountInfo.visibility = View.VISIBLE
     }
 
-    override fun setLocation(location: Location) {
-        mapFragment.position = LatLng(location.latitude, location.longitude)
+    override fun setLocation(location: Location?) {
+        mapFragment.position = location?.let { LatLng(it.latitude, it.longitude) }
     }
 
     override fun setDistance(distance: String) {

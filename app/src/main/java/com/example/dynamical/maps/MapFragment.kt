@@ -70,7 +70,7 @@ class MapFragment(private val doTrackPosition: Boolean, private val onReadyCallb
                 binding.locationButton.visibility = View.GONE
             }
             map.setOnCameraMoveStartedListener { reason ->
-                if (reason == REASON_GESTURE) {
+                if (reason == REASON_GESTURE && position != null) {
                     followPosition = false
                     binding.locationButton.visibility = View.VISIBLE
                 }

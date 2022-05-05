@@ -15,7 +15,7 @@ interface NewTrackView {
 
     fun setTime(time: String)
     fun setStepCount(stepCount: String)
-    fun setLocation(location: Location)
+    fun setLocation(location: Location?)
     fun setDistance(distance: String)
     fun getNewPolyline(type: PolylineType): Polyline
 

@@ -21,11 +21,11 @@ class Tracker(application: Application) {
     private val stepCounter =
         StepCounter(application.getSystemService(Context.SENSOR_SERVICE) as SensorManager)
     private val stopwatch = Stopwatch()
-    private val gps = GPS(application)
+    private val gps = GPS()
 
     val stepCount: LiveData<Int?> get() = stepCounter.stepCount
     val time: LiveData<Long> get() = stopwatch.time
-    val location: LiveData<Location> get() = gps.location
+    val location: LiveData<Location?> get() = gps.location
 
     private val _routePart = MutableLiveData<List<LatLng>>()
     val routePart: LiveData<List<LatLng>> = _routePart
@@ -38,11 +38,13 @@ class Tracker(application: Application) {
 
     private var previousLocation: Location? = null
 
-    private val locationObserver = { it: Location ->
-        val location = LatLng(it.latitude, it.longitude)
-        _distance.value = (_distance.value ?: 0.0f) + (previousLocation?.distanceTo(it) ?: 0.0f)
-        previousLocation = it
-        _routePart.value = _routePart.value?.plus(location) ?: listOf(location)
+    private val locationObserver = { it: Location? ->
+        if(it != null) {
+            val location = LatLng(it.latitude, it.longitude)
+            _distance.value = (_distance.value ?: 0.0f) + (previousLocation?.distanceTo(it) ?: 0.0f)
+            previousLocation = it
+            _routePart.value = _routePart.value?.plus(location) ?: listOf(location)
+        }
     }
 
     enum class State {
@@ -58,12 +60,19 @@ class Tracker(application: Application) {
     private val _observableState = MutableLiveData<State>()
     val observableState: LiveData<State> = _observableState
 
+    var gpsContext: Context? = null
+        set(value) {
+            field = value
+            if (state == State.RUNNING && value != null)
+                gps.start(value)
+        }
+
     fun start() {
         if (state != State.RUNNING) {
             state = State.RUNNING
             stopwatch.start()
             stepCounter.start()
-            gps.start()
+            gpsContext?.let { gps.start(it) }
             previousLocation = null
             location.observeForever(locationObserver)
         }
@@ -88,7 +97,7 @@ class Tracker(application: Application) {
         state = State.STOPPED
         stopwatch.reset()
         stepCounter.reset()
-        gps.stop()
+        gps.reset()
         location.removeObserver(locationObserver)
 
         _routePart.value = listOf()
@@ -96,5 +105,7 @@ class Tracker(application: Application) {
 
         _distance.value = null
         previousLocation = null
+
+        gpsContext = null
     }
 }

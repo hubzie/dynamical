@@ -1,7 +1,11 @@
 package com.example.dynamical.newtrack.fragment
 
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.location.Location
+import android.os.IBinder
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import com.example.dynamical.DynamicalApplication
@@ -17,7 +21,20 @@ class NewTrackPresenter(
     private val view: NewTrackView,
     private val application: DynamicalApplication
 ) {
-    private val tracker: Tracker = application.tracker
+    private val tracker = application.tracker
+
+    private var polyline: Polyline? = null
+
+    private val connection = object : ServiceConnection {
+        override fun onServiceConnected(className: ComponentName, binder: IBinder) {
+            tracker.gpsContext = (binder as TrackerService.TrackerBinder).serviceContext
+        }
+
+        override fun onServiceDisconnected(className: ComponentName) {
+            tracker.gpsContext = null
+        }
+    }
+    private var isBonded = false
 
     fun initialize() {
         // Some random stuff happens here, so objects are required instead of lambdas
@@ -31,8 +48,8 @@ class NewTrackPresenter(
                     ?: view.hideStepCount()
             }
         })
-        tracker.location.observe(view.lifecycleOwner, object : Observer<Location> {
-            override fun onChanged(location: Location) = view.setLocation(location)
+        tracker.location.observe(view.lifecycleOwner, object : Observer<Location?> {
+            override fun onChanged(location: Location?) = view.setLocation(location)
         })
         tracker.distance.observe(view.lifecycleOwner, object : Observer<Float?> {
             override fun onChanged(distance: Float?) {
@@ -62,8 +79,6 @@ class NewTrackPresenter(
             view.getNewPolyline(PolylineType.CURRENT).points = route
     }
 
-    private var polyline: Polyline? = null
-
     private fun pauseMeasure() {
         polyline = null
         tracker.stop()
@@ -85,8 +100,10 @@ class NewTrackPresenter(
                 return
             }
 
-            val intent = Intent(application.applicationContext, TrackerService::class.java)
-            application.startForegroundService(intent)
+            Intent(application.applicationContext, TrackerService::class.java).also { intent ->
+                application.startForegroundService(intent)
+                isBonded = application.bindService(intent, connection, Context.BIND_AUTO_CREATE)
+            }
         }
 
         polyline = view.getNewPolyline(PolylineType.CURRENT)
@@ -102,8 +119,14 @@ class NewTrackPresenter(
     fun onEnd() {
         // Delete notification
         if (tracker.state != Tracker.State.STOPPED) {
-            val intent = Intent(application.applicationContext, TrackerService::class.java)
-            application.stopService(intent)
+            if(isBonded) {
+                application.unbindService(connection)
+                isBonded = false
+            }
+
+            Intent(application.applicationContext, TrackerService::class.java).also { intent ->
+                application.stopService(intent)
+            }
             tracker.stop()
 
             // Save track
@@ -114,6 +137,7 @@ class NewTrackPresenter(
                 track = tracker.route
             )
             view.routeViewModel.insertRoute(route)
+            view.setLocation(null)
         }
 
         polyline = null

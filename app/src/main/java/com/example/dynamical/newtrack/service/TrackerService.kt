@@ -1,11 +1,14 @@
 package com.example.dynamical.newtrack.service
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Binder
+import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.navigation.NavDeepLinkBuilder
@@ -15,7 +18,8 @@ import com.example.dynamical.mesure.Tracker
 import com.example.dynamical.mesure.Tracker.Companion.distanceToString
 import com.example.dynamical.mesure.Tracker.Companion.timeToString
 
-// TODO: prevent sleeping
+// TODO: prevent notification from freezing after working in background for some time
+// TODO: fix premature end caused by GPS
 class TrackerService : LifecycleService() {
     companion object {
         const val ACTION_PAUSE = "com.example.dynamical.service.PAUSE"
@@ -43,6 +47,17 @@ class TrackerService : LifecycleService() {
                 ACTION_RESUME -> tracker.start()
             }
         }
+    }
+
+    inner class TrackerBinder : Binder() {
+        val serviceContext: Context = this@TrackerService
+    }
+
+    private val binder = TrackerBinder()
+
+    @SuppressLint("MissingSuperCall")
+    override fun onBind(intent: Intent): IBinder {
+        return binder
     }
 
     private fun createPendingIntent(action: String): PendingIntent {
@@ -110,13 +125,18 @@ class TrackerService : LifecycleService() {
         startForeground(DynamicalApplication.NOTIFICATION_ID, createNotification(""))
 
         if (!isRunning) { // Prevent multiple starts
-            val tracker: Tracker = (application as DynamicalApplication).tracker
             tracker.time.observe(this) { time ->
                 this.time = time
                 updateNotification()
             }
-            tracker.stepCount.observe(this) { stepCount -> this.stepCount = stepCount }
-            tracker.distance.observe(this) { distance -> this.distance = distance }
+            tracker.stepCount.observe(this) { stepCount ->
+                this.stepCount = stepCount
+                updateNotification()
+            }
+            tracker.distance.observe(this) { distance ->
+                this.distance = distance
+                updateNotification()
+            }
             tracker.observableState.observe(this) { state ->
                 changeAction(when (state) {
                     Tracker.State.RUNNING -> ACTION_PAUSE
