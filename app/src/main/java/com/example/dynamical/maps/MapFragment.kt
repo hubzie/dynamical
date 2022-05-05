@@ -120,8 +120,8 @@ class MapFragment(private val doTrackPosition: Boolean, private val onReadyCallb
         }
     }
 
-    fun newPolyline(): Polyline {
-        val polyline = PolylineFactory.createPolyline(map)
+    fun newPolyline(type: PolylineType): Polyline {
+        val polyline = PolylineFactory.createPolyline(map, type)
         polylineList.add(polyline)
         return polyline
     }

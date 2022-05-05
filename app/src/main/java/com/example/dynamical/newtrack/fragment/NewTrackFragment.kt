@@ -12,14 +12,17 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.example.dynamical.DynamicalApplication
 import com.example.dynamical.R
 import com.example.dynamical.data.RouteViewModel
 import com.example.dynamical.data.RouteViewModelFactory
 import com.example.dynamical.databinding.NewTrackFragmentBinding
 import com.example.dynamical.maps.MapFragment
+import com.example.dynamical.maps.PolylineType
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
+import kotlinx.coroutines.launch
 
 class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
     override val routeViewModel: RouteViewModel by viewModels {
@@ -83,8 +86,8 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
         binding.distanceInfo.visibility = View.VISIBLE
     }
 
-    override fun getNewPolyline(): Polyline {
-        return mapFragment.newPolyline()
+    override fun getNewPolyline(type: PolylineType): Polyline {
+        return mapFragment.newPolyline(type)
     }
 
 
@@ -129,15 +132,32 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
         binding.timeInfo.visibility = View.GONE
         binding.distanceInfo.visibility = View.GONE
         binding.stepCountInfo.visibility = View.GONE
+        if ((requireActivity().application as DynamicalApplication).followedRoute != null)
+            binding.unfollowButton.visibility = View.VISIBLE
 
         // Setup button
         binding.actionButton.setOnClickListener { presenter.onFlipState() }
         binding.endButton.setOnClickListener { presenter.onEnd() }
 
-        // Setup presenter when map become ready
+        var followedTrack: List<Polyline> = listOf()
+        binding.unfollowButton.setOnClickListener {
+            followedTrack.forEach { polyline -> polyline.remove() }
+            it.visibility = View.INVISIBLE
+            (requireActivity().application as DynamicalApplication).followedRoute = null
+        }
+
+        // Setup presenter and show followed track when the map become ready
         _mapFragment = MapFragment(true) {
             _presenter = NewTrackPresenter(this, requireActivity().application as DynamicalApplication)
             presenter.initialize()
+            lifecycleScope.launch {
+                (requireActivity().application as DynamicalApplication).followedRoute?.let { id ->
+                    val route = routeViewModel.getRouteDetails(id)
+                    followedTrack = route.track?.map { part ->
+                        getNewPolyline(PolylineType.FOLLOWED).apply { points = part }
+                    } ?: listOf()
+                }
+            }
         }
 
         with(requireActivity().supportFragmentManager.beginTransaction()) {

@@ -7,6 +7,7 @@ import androidx.lifecycle.Observer
 import com.example.dynamical.DynamicalApplication
 import com.example.dynamical.R
 import com.example.dynamical.data.Route
+import com.example.dynamical.maps.PolylineType
 import com.example.dynamical.mesure.Tracker
 import com.example.dynamical.newtrack.service.TrackerService
 import com.google.android.gms.maps.model.LatLng
@@ -48,7 +49,7 @@ class NewTrackPresenter(
             override fun onChanged(state: Tracker.State) {
                 when (state) {
                     Tracker.State.RUNNING -> {
-                        polyline = view.getNewPolyline()
+                        polyline = view.getNewPolyline(PolylineType.CURRENT)
                         view.onMeasureStart()
                     }
                     Tracker.State.PAUSED -> view.onMeasurePause()
@@ -58,7 +59,7 @@ class NewTrackPresenter(
         })
 
         for (route in tracker.route)
-            view.getNewPolyline().points = route
+            view.getNewPolyline(PolylineType.CURRENT).points = route
     }
 
     private var polyline: Polyline? = null
@@ -88,7 +89,7 @@ class NewTrackPresenter(
             application.startForegroundService(intent)
         }
 
-        polyline = view.getNewPolyline()
+        polyline = view.getNewPolyline(PolylineType.CURRENT)
         tracker.start()
         view.onMeasureStart()
     }

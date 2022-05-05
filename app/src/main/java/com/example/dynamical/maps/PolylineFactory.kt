@@ -11,14 +11,19 @@ import com.google.android.gms.maps.model.RoundCap
 
 class PolylineFactory {
     companion object {
-        fun createPolyline(map: GoogleMap): Polyline {
+        fun createPolyline(map: GoogleMap, type: PolylineType): Polyline {
             val resources = DynamicalApplication.mResources
             return map.addPolyline(PolylineOptions()).apply {
                 startCap = RoundCap()
                 endCap = RoundCap()
                 jointType = JointType.ROUND
                 width = resources.getDimension(R.dimen.line_width)
-                color = ResourcesCompat.getColor(resources, R.color.purple_500, null)
+                color = when(type) {
+                    PolylineType.CURRENT ->
+                        ResourcesCompat.getColor(resources, R.color.purple_500, null)
+                    PolylineType.FOLLOWED ->
+                        ResourcesCompat.getColor(resources, R.color.green_500, null)
+                }
             }
         }
     }

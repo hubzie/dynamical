@@ -17,6 +17,9 @@ class DynamicalApplication : Application() {
         const val NOTIFICATION_ID = 1835 // Some random number
         const val NOTIFICATION_CHANNEL_ID = "Dynamical_notification_channel"
         lateinit var mResources: Resources
+
+        const val SHARED_PREFERENCES_NAME = "Dynamical_shared_preferences"
+        const val FOLLOWED_ROUTE = "FOLLOWED_ROUTE"
     }
 
     val applicationScope = CoroutineScope(SupervisorJob())
@@ -25,11 +28,26 @@ class DynamicalApplication : Application() {
     val repository by lazy { RouteRepository(database.routeDao()) }
 
     val tracker by lazy { Tracker(this) }
+    val sharedPreferences by lazy { getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)!! }
+
+    var followedRoute: Int? = null
+        set(value) {
+            sharedPreferences.edit().apply {
+                value?.let { putInt(FOLLOWED_ROUTE, it) }
+                    ?: remove(FOLLOWED_ROUTE)
+                apply()
+            }
+            field = value
+        }
 
     override fun onCreate() {
         super.onCreate()
-
         mResources = resources
+
+        // Load followed route
+        followedRoute = if(sharedPreferences.contains(FOLLOWED_ROUTE))
+            sharedPreferences.getInt(FOLLOWED_ROUTE, 0)
+        else null
 
         // Create notification channel
         val channel = NotificationChannel(

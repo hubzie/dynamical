@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.dynamical.R
 import com.example.dynamical.data.Route
 import com.example.dynamical.maps.PolylineFactory
+import com.example.dynamical.maps.PolylineType
 import com.example.dynamical.mesure.Tracker
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -63,7 +64,7 @@ class RouteAdapter : ListAdapter<Route, RouteAdapter.ViewHolder>(RouteDiff()) {
             route.track?.let { track ->
                 // Draw
                 for (part in track)
-                    PolylineFactory.createPolyline(map).points = part
+                    PolylineFactory.createPolyline(map, PolylineType.CURRENT).points = part
 
                 // Zoom
                 val boundsBuilder = LatLngBounds.Builder()

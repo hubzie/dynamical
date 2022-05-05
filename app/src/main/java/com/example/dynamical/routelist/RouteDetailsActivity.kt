@@ -13,6 +13,7 @@ import com.example.dynamical.data.RouteViewModel
 import com.example.dynamical.data.RouteViewModelFactory
 import com.example.dynamical.databinding.RouteDetailsActivityBinding
 import com.example.dynamical.maps.MapFragment
+import com.example.dynamical.maps.PolylineType
 import com.example.dynamical.mesure.Tracker.Companion.distanceToString
 import com.example.dynamical.mesure.Tracker.Companion.timeToString
 import kotlinx.coroutines.launch
@@ -25,6 +26,8 @@ class RouteDetailsActivity : AppCompatActivity() {
 
     private lateinit var route: Route
 
+    lateinit var menu: Menu
+
     private val routeViewModel: RouteViewModel by viewModels {
         RouteViewModelFactory((application as DynamicalApplication).repository)
     }
@@ -35,7 +38,7 @@ class RouteDetailsActivity : AppCompatActivity() {
         mapFragment = MapFragment(false) {
             route.track?.let { track ->
                 for (part in track)
-                    mapFragment.newPolyline().points = part
+                    mapFragment.newPolyline(PolylineType.CURRENT).points = part
                 mapFragment.fitZoom()
             }
         }
@@ -73,6 +76,14 @@ class RouteDetailsActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.route_details_menu, menu)
+        this.menu = menu
+
+        val followedRoute = (application as DynamicalApplication).followedRoute
+
+        if(followedRoute == null || followedRoute != route.id)
+            menu.findItem(R.id.unfollow_route).isVisible = false
+        else
+            menu.findItem(R.id.follow_route).isVisible = false
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -85,6 +96,18 @@ class RouteDetailsActivity : AppCompatActivity() {
             R.id.delete_route -> {
                 routeViewModel.deleteRoute(route)
                 finish()
+                true
+            }
+            R.id.follow_route -> {
+                (application as DynamicalApplication).followedRoute = route.id
+                menu.findItem(R.id.follow_route).isVisible = false
+                menu.findItem(R.id.unfollow_route).isVisible = true
+                true
+            }
+            R.id.unfollow_route -> {
+                (application as DynamicalApplication).followedRoute = null
+                menu.findItem(R.id.follow_route).isVisible = true
+                menu.findItem(R.id.unfollow_route).isVisible = false
                 true
             }
             else -> super.onOptionsItemSelected(item)

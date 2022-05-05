@@ -3,6 +3,7 @@ package com.example.dynamical.newtrack.fragment
 import android.location.Location
 import androidx.lifecycle.LifecycleOwner
 import com.example.dynamical.data.RouteViewModel
+import com.example.dynamical.maps.PolylineType
 import com.google.android.gms.maps.model.Polyline
 
 interface NewTrackView {
@@ -16,7 +17,7 @@ interface NewTrackView {
     fun setStepCount(stepCount: String)
     fun setLocation(location: Location)
     fun setDistance(distance: String)
-    fun getNewPolyline(): Polyline
+    fun getNewPolyline(type: PolylineType): Polyline
 
     fun hideStepCount()
     fun hideDistance()

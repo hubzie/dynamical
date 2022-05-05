@@ -25,6 +25,7 @@
 
     <string name="delete_route">Delete</string>
     <string name="follow_route">Follow</string>
+    <string name="unfollow_route">Unfollow</string>
 
     <string name="EXTRA_ROUTE_ID">com.example.dynamical.extra.ROUTE_ID</string>
 </resources>
