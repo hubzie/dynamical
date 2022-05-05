@@ -6,7 +6,6 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.navigation.NavDeepLinkBuilder
@@ -38,7 +37,6 @@ class TrackerService : LifecycleService() {
 
     class Receiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            Log.d("Notify", "")
             val tracker: Tracker = (context.applicationContext as DynamicalApplication).tracker
             when (intent.action) {
                 ACTION_PAUSE -> tracker.stop()

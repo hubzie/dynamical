@@ -23,7 +23,6 @@ class MapFragment(private val doTrackPosition: Boolean, private val onReadyCallb
     private val binding get() = _binding!!
     private lateinit var map: GoogleMap
 
-    // TODO: make color dependent from theme
     private var markerIcon: BitmapDescriptor? = null
     private var marker: Marker? = null
 
@@ -106,28 +105,26 @@ class MapFragment(private val doTrackPosition: Boolean, private val onReadyCallb
 
     fun fitZoom() {
         val boundsBuilder = LatLngBounds.Builder()
+        var count = 0
         for (polyline in polylineList)
-            for (point in polyline.points)
+            for (point in polyline.points) {
+                count++
                 boundsBuilder.include(point)
+            }
 
-        val padding = (resources.getDimension(R.dimen.map_zoom_padding) / resources.displayMetrics.density).toInt()
-        map.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), padding))
+        if (count > 0) {
+            val padding =
+                (resources.getDimension(R.dimen.map_zoom_padding) / resources.displayMetrics.density).toInt()
+            map.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), padding))
+        }
     }
 
-    // TODO: make color dependent from theme
     fun newPolyline(): Polyline {
         val polyline = map.addPolyline(PolylineOptions()).apply {
             startCap = RoundCap()
             endCap = RoundCap()
             jointType = JointType.ROUND
             width = resources.getDimension(R.dimen.line_width)
-            /* val typedValue = TypedValue()
-            requireContext().theme.resolveAttribute(
-                androidx.appcompat.R.attr.colorPrimary,
-                typedValue,
-                true
-            )
-            color = typedValue.data */
             color = ResourcesCompat.getColor(resources, R.color.purple_500, null)
         }
 

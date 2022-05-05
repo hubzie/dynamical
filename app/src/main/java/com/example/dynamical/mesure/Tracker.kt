@@ -76,7 +76,10 @@ class Tracker(application: Application) {
             stepCounter.stop()
             location.removeObserver(locationObserver)
 
-            routePart.value?.let { route = route.plus(listOf(it)) }
+            routePart.value?.let { part ->
+                if (part.isNotEmpty())
+                    route = route.plus(listOf(part))
+            }
             _routePart.value = listOf()
         }
     }

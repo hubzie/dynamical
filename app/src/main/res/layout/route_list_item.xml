@@ -22,16 +22,15 @@
             android:id="@+id/map_item_preview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
+            android:visibility="invisible"
             map:liteMode="true"
             map:mapType="none" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <TextView
-        android:id="@+id/caption"
+    <LinearLayout
+        android:id="@+id/item_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/placeholder"
-        android:textSize="@dimen/subtext_size" />
-
+        android:orientation="vertical"
+        android:padding="@dimen/margin"/>
 </LinearLayout>

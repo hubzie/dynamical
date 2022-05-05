@@ -2,7 +2,6 @@ package com.example.dynamical.newtrack.fragment
 
 import android.content.Intent
 import android.location.Location
-import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import com.example.dynamical.DynamicalApplication
@@ -38,7 +37,6 @@ class NewTrackPresenter(
         })
         tracker.routePart.observe(view.lifecycleOwner, object : Observer<List<LatLng>> {
             override fun onChanged(route: List<LatLng>) {
-                Log.d("Polyline", "${polyline}, $route")
                 polyline?.points = route
             }
         })
