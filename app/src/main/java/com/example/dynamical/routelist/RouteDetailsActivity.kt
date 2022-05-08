@@ -57,6 +57,18 @@ class RouteDetailsActivity : AppCompatActivity() {
         route.distance?.let { binding.dataList.addView(
             factory.produce(getString(R.string.distance_label, distanceToString(it)))
         ) }
+
+        setupMenu()
+    }
+
+    private fun setupMenu() {
+        if(!::menu.isInitialized || !::route.isInitialized) return
+
+        val followedRoute = (application as DynamicalApplication).followedRoute
+        if(followedRoute == null || followedRoute != route.id)
+            menu.findItem(R.id.unfollow_route).isVisible = false
+        else
+            menu.findItem(R.id.follow_route).isVisible = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,14 +88,10 @@ class RouteDetailsActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.route_details_menu, menu)
+
         this.menu = menu
+        setupMenu()
 
-        val followedRoute = (application as DynamicalApplication).followedRoute
-
-        if(followedRoute == null || followedRoute != route.id)
-            menu.findItem(R.id.unfollow_route).isVisible = false
-        else
-            menu.findItem(R.id.follow_route).isVisible = false
         return super.onCreateOptionsMenu(menu)
     }
 

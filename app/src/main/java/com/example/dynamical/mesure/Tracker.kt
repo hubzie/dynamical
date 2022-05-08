@@ -7,6 +7,7 @@ import android.location.Location
 import android.text.format.DateUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 
@@ -49,15 +50,16 @@ class Tracker private constructor(application: Application) {
 
     private var previousLocation: Location? = null
 
-    private val locationObserver = { it: Location? ->
-        if(it != null) {
-            val location = LatLng(it.latitude, it.longitude)
-            _distance.value = (_distance.value ?: 0.0f) + (previousLocation?.distanceTo(it) ?: 0.0f)
-            _routePart.value = _routePart.value?.plus(location) ?: listOf(location)
-        }
+    private val locationObserver = Observer<Location?> { location ->
+            if (location != null) {
+                val latLng = LatLng(location.latitude, location.longitude)
+                _distance.value =
+                    (_distance.value ?: 0.0f) + (previousLocation?.distanceTo(location) ?: 0.0f)
+                _routePart.value = _routePart.value?.plus(latLng) ?: listOf(latLng)
+            }
 
-        previousLocation = it
-    }
+            previousLocation = location
+        }
 
     enum class State {
         STOPPED, RUNNING, PAUSED
