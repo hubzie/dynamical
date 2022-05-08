@@ -15,18 +15,24 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.example.dynamical.DynamicalApplication
 import com.example.dynamical.R
-import com.example.dynamical.data.RouteViewModel
-import com.example.dynamical.data.RouteViewModelFactory
+import com.example.dynamical.data.DatabaseViewModel
+import com.example.dynamical.data.DatabaseViewModelFactory
 import com.example.dynamical.databinding.NewTrackFragmentBinding
 import com.example.dynamical.maps.MapFragment
 import com.example.dynamical.maps.PolylineType
+import com.example.dynamical.mesure.Tracker
+import com.example.dynamical.mesure.TrackerViewModel
+import com.example.dynamical.mesure.TrackerViewModelFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
 import kotlinx.coroutines.launch
 
 class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
-    override val routeViewModel: RouteViewModel by viewModels {
-        RouteViewModelFactory((requireActivity().application as DynamicalApplication).repository)
+    override val databaseViewModel: DatabaseViewModel by viewModels {
+        DatabaseViewModelFactory((requireActivity().application as DynamicalApplication).repository)
+    }
+    private val trackerViewModel: TrackerViewModel by viewModels {
+        TrackerViewModelFactory(Tracker.getTracker(requireActivity().application))
     }
 
     // Binding
@@ -148,11 +154,15 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
 
         // Setup presenter and show followed track when the map become ready
         _mapFragment = MapFragment(true) {
-            _presenter = NewTrackPresenter(this, requireActivity().application as DynamicalApplication)
+            _presenter = NewTrackPresenter(
+                this,
+                requireActivity().application as DynamicalApplication,
+                trackerViewModel
+            )
             presenter.initialize()
             lifecycleScope.launch {
                 (requireActivity().application as DynamicalApplication).followedRoute?.let { id ->
-                    val route = routeViewModel.getRouteDetails(id)
+                    val route = databaseViewModel.getRouteDetails(id)
                     followedTrack = route.track?.map { part ->
                         getNewPolyline(PolylineType.FOLLOWED).apply { points = part }
                     } ?: listOf()

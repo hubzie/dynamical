@@ -9,15 +9,17 @@ import com.example.dynamical.R
 import com.example.dynamical.data.Route
 import com.example.dynamical.maps.PolylineType
 import com.example.dynamical.mesure.Tracker
+import com.example.dynamical.mesure.TrackerViewModel
 import com.example.dynamical.newtrack.service.TrackerService
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
 
 class NewTrackPresenter(
     private val view: NewTrackView,
-    private val application: DynamicalApplication
+    private val application: DynamicalApplication,
+    private val trackerViewModel: TrackerViewModel
 ) {
-    private val tracker = application.tracker
+    private val tracker get() = trackerViewModel.tracker
 
     private var polyline: Polyline? = null
 
@@ -115,7 +117,7 @@ class NewTrackPresenter(
                 distance = tracker.distance.value,
                 track = tracker.route
             )
-            view.routeViewModel.insertRoute(route)
+            view.databaseViewModel.insertRoute(route)
             view.setLocation(null)
         }
 

@@ -8,16 +8,16 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.dynamical.DynamicalApplication
-import com.example.dynamical.data.RouteViewModel
-import com.example.dynamical.data.RouteViewModelFactory
+import com.example.dynamical.data.DatabaseViewModel
+import com.example.dynamical.data.DatabaseViewModelFactory
 import com.example.dynamical.databinding.RouteListFragmentBinding
 
 class RouteListFragment : Fragment() {
     private var _binding: RouteListFragmentBinding? = null
     private val binding get() = _binding!!
 
-    private val routeViewModel: RouteViewModel by viewModels {
-        RouteViewModelFactory((requireActivity().application as DynamicalApplication).repository)
+    private val databaseViewModel: DatabaseViewModel by viewModels {
+        DatabaseViewModelFactory((requireActivity().application as DynamicalApplication).repository)
     }
 
     override fun onCreateView(
@@ -34,7 +34,7 @@ class RouteListFragment : Fragment() {
             addItemDecoration(GridSpacingDecoration(10, 10))
         }
 
-        routeViewModel.allRoutesOnline.observe(requireActivity()) { data ->
+        databaseViewModel.allRoutesOnline.observe(requireActivity()) { data ->
             data?.let { routeAdapter.submitList(data) }
         }
 

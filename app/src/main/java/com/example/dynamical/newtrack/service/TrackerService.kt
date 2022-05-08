@@ -1,5 +1,6 @@
 package com.example.dynamical.newtrack.service
 
+import android.app.Application
 import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -13,10 +14,9 @@ import com.example.dynamical.DynamicalApplication
 import com.example.dynamical.R
 import com.example.dynamical.mesure.Tracker
 import com.example.dynamical.mesure.Tracker.Companion.distanceToString
+import com.example.dynamical.mesure.Tracker.Companion.getTracker
 import com.example.dynamical.mesure.Tracker.Companion.timeToString
 
-// TODO: prevent notification from freezing after working in background for some time
-// TODO: fix premature end caused by GPS
 class TrackerService : LifecycleService() {
     companion object {
         const val ACTION_PAUSE = "com.example.dynamical.service.PAUSE"
@@ -38,7 +38,7 @@ class TrackerService : LifecycleService() {
 
     class Receiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            val tracker: Tracker = (context.applicationContext as DynamicalApplication).tracker
+            val tracker: Tracker = getTracker(context.applicationContext as Application)
             when (intent.action) {
                 ACTION_PAUSE -> tracker.stop()
                 ACTION_RESUME -> tracker.start()
@@ -81,7 +81,7 @@ class TrackerService : LifecycleService() {
     override fun onCreate() {
         super.onCreate()
 
-        tracker = (application as DynamicalApplication).tracker
+        tracker = getTracker(application)
 
         pauseAction = NotificationCompat.Action(
             R.drawable.pause,

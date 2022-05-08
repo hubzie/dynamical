@@ -6,7 +6,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
-class RouteViewModel(private val routeRepository: RouteRepository) : ViewModel() {
+class DatabaseViewModel(private val routeRepository: RouteRepository) : ViewModel() {
     val allRoutesOnline: LiveData<List<Route>> = routeRepository.allRoutesOnline.asLiveData()
     suspend fun getRouteDetails(id: Int): Route = routeRepository.getRouteDetails(id)
     fun insertRoute(route: Route) = viewModelScope.launch {

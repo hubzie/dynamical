@@ -8,9 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.dynamical.DynamicalApplication
 import com.example.dynamical.R
+import com.example.dynamical.data.DatabaseViewModel
+import com.example.dynamical.data.DatabaseViewModelFactory
 import com.example.dynamical.data.Route
-import com.example.dynamical.data.RouteViewModel
-import com.example.dynamical.data.RouteViewModelFactory
 import com.example.dynamical.databinding.RouteDetailsActivityBinding
 import com.example.dynamical.maps.MapFragment
 import com.example.dynamical.maps.PolylineType
@@ -28,8 +28,8 @@ class RouteDetailsActivity : AppCompatActivity() {
 
     lateinit var menu: Menu
 
-    private val routeViewModel: RouteViewModel by viewModels {
-        RouteViewModelFactory((application as DynamicalApplication).repository)
+    private val databaseViewModel: DatabaseViewModel by viewModels {
+        DatabaseViewModelFactory((application as DynamicalApplication).repository)
     }
 
     private fun setup(route: Route) {
@@ -71,7 +71,7 @@ class RouteDetailsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val id = intent.getIntExtra(getString(R.string.EXTRA_ROUTE_ID), -1)
-        lifecycleScope.launch { setup(routeViewModel.getRouteDetails(id)) }
+        lifecycleScope.launch { setup(databaseViewModel.getRouteDetails(id)) }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -94,7 +94,7 @@ class RouteDetailsActivity : AppCompatActivity() {
                 true
             }
             R.id.delete_route -> {
-                routeViewModel.deleteRoute(route)
+                databaseViewModel.deleteRoute(route)
                 finish()
                 true
             }

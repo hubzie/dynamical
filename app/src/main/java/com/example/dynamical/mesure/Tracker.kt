@@ -7,21 +7,32 @@ import android.location.Location
 import android.text.format.DateUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 
-class Tracker(application: Application) {
+class Tracker private constructor(application: Application) {
     companion object {
         fun timeToString(time: Long): String = DateUtils.formatElapsedTime(time / 1000)
         fun distanceToString(distance: Float): String {
             return if (distance < 1000.0f) "%.0fm".format(distance)
             else "%.1fkm".format(distance / 1000)
         }
+
+        private var INSTANCE: Tracker? = null
+
+        fun getTracker(application: Application): Tracker {
+            return INSTANCE ?: synchronized(this) {
+                val instance = Tracker(application)
+                INSTANCE = instance
+                instance
+            }
+        }
     }
 
     private val stepCounter =
         StepCounter(application.getSystemService(Context.SENSOR_SERVICE) as SensorManager)
     private val stopwatch = Stopwatch()
-    private val gps = GPS(application)
+    private val gps = GPS(LocationServices.getFusedLocationProviderClient(application))
 
     val stepCount: LiveData<Int?> get() = stepCounter.stepCount
     val time: LiveData<Long> get() = stopwatch.time
@@ -42,9 +53,10 @@ class Tracker(application: Application) {
         if(it != null) {
             val location = LatLng(it.latitude, it.longitude)
             _distance.value = (_distance.value ?: 0.0f) + (previousLocation?.distanceTo(it) ?: 0.0f)
-            previousLocation = it
             _routePart.value = _routePart.value?.plus(location) ?: listOf(location)
         }
+
+        previousLocation = it
     }
 
     enum class State {
