@@ -113,22 +113,19 @@ class TrackerService : LifecycleService() {
 
         if (!isRunning) { // Prevent multiple starts
             tracker.time.observe(this) { time ->
+                val oldTime = this.time
                 this.time = time
-                updateNotification()
+                // If number of seconds changed
+                if(oldTime/1000 != time/1000) updateNotification()
             }
-            tracker.stepCount.observe(this) { stepCount ->
-                this.stepCount = stepCount
-                updateNotification()
-            }
-            tracker.distance.observe(this) { distance ->
-                this.distance = distance
-                updateNotification()
-            }
+            tracker.stepCount.observe(this) { stepCount -> this.stepCount = stepCount }
+            tracker.distance.observe(this) { distance -> this.distance = distance }
             tracker.observableState.observe(this) { state ->
                 changeAction(when (state) {
                     Tracker.State.RUNNING -> ACTION_PAUSE
                     else -> ACTION_RESUME
                 })
+                updateNotification()
             }
 
             isRunning = true

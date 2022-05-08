@@ -2,10 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/delete_route"
-        android:icon="@drawable/delete"
-        android:title="@string/delete_route" />
-    <item
         android:id="@+id/follow_route"
         android:icon="@drawable/follow"
         android:title="@string/follow_route" />
@@ -13,4 +9,8 @@
         android:id="@+id/unfollow_route"
         android:icon="@drawable/unfollow"
         android:title="@string/unfollow_route" />
+    <item
+        android:id="@+id/delete_route"
+        android:icon="@drawable/delete"
+        android:title="@string/delete_route" />
 </menu>
