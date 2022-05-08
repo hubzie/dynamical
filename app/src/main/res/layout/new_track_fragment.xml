@@ -92,7 +92,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/placeholder"
                     android:textSize="@dimen/text_size" />
             </LinearLayout>
 
@@ -114,7 +113,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/placeholder"
                     android:textSize="@dimen/text_size" />
             </LinearLayout>
         </LinearLayout>
@@ -132,7 +130,8 @@
                 android:id="@+id/step_count_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                tools:ignore="UselessParent">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -146,7 +145,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/placeholder"
                     android:textSize="@dimen/text_size" />
             </LinearLayout>
         </LinearLayout>

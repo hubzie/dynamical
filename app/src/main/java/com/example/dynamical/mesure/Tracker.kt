@@ -5,13 +5,18 @@ import android.content.Context
 import android.hardware.SensorManager
 import android.location.Location
 import android.text.format.DateUtils
+import androidx.activity.result.IntentSenderRequest
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import com.google.android.gms.location.LocationServices
+import com.example.dynamical.DynamicalApplication
+import com.example.dynamical.MainActivity
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.LocationSettingsStatusCodes
 import com.google.android.gms.maps.model.LatLng
 
-class Tracker private constructor(application: Application) {
+class Tracker private constructor(private val application: DynamicalApplication) {
     companion object {
         fun timeToString(time: Long): String = DateUtils.formatElapsedTime(time / 1000)
         fun distanceToString(distance: Float): String {
@@ -23,7 +28,7 @@ class Tracker private constructor(application: Application) {
 
         fun getTracker(application: Application): Tracker {
             return INSTANCE ?: synchronized(this) {
-                val instance = Tracker(application)
+                val instance = Tracker(application as DynamicalApplication)
                 INSTANCE = instance
                 instance
             }
@@ -33,7 +38,7 @@ class Tracker private constructor(application: Application) {
     private val stepCounter =
         StepCounter(application.getSystemService(Context.SENSOR_SERVICE) as SensorManager)
     private val stopwatch = Stopwatch()
-    private val gps = GPS(LocationServices.getFusedLocationProviderClient(application))
+    private val gps = GPS(application)
 
     val stepCount: LiveData<Int?> get() = stepCounter.stepCount
     val time: LiveData<Long> get() = stopwatch.time
@@ -74,15 +79,38 @@ class Tracker private constructor(application: Application) {
     private val _observableState = MutableLiveData<State>()
     val observableState: LiveData<State> = _observableState
 
+    fun forceStart() {
+        state = State.RUNNING
+        stopwatch.start()
+        stepCounter.start()
+        gps.start()
+        previousLocation = null
+        location.observeForever(locationObserver)
+    }
+
+
     fun start() {
-        if (state != State.RUNNING) {
-            state = State.RUNNING
-            stopwatch.start()
-            stepCounter.start()
-            gps.start()
-            previousLocation = null
-            location.observeForever(locationObserver)
-        }
+        if (state != State.RUNNING)
+            gps.askForTurningOnGPS()
+                .addOnCompleteListener { task ->
+                    try {
+                        task.getResult(ApiException::class.java)
+                        forceStart()
+                    } catch (exception: ApiException) {
+                        if (exception.statusCode == LocationSettingsStatusCodes.RESOLUTION_REQUIRED) {
+                            val activity = application.currentActivity
+                            if (activity !is MainActivity) {
+                                forceStart()
+                                return@addOnCompleteListener
+                            }
+
+                            val intent = IntentSenderRequest
+                                .Builder((exception as ResolvableApiException).resolution)
+                                .build()
+                            activity.resultLauncher.launch(intent)
+                        }
+                    }
+                }
     }
 
     fun stop() {

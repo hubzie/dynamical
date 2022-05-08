@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.dynamical.DynamicalApplication
@@ -102,8 +103,16 @@ class RouteDetailsActivity : AppCompatActivity() {
                 true
             }
             R.id.delete_route -> {
-                databaseViewModel.deleteRoute(route)
-                finish()
+                AlertDialog.Builder(this)
+                    .setMessage(R.string.delete_confirm_message)
+                    .setPositiveButton(R.string.delete_confirm_positive) { _, _ ->
+                        databaseViewModel.deleteRoute(route)
+                        finish()
+                    }
+                    .setNegativeButton(R.string.delete_confirm_negative) { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .create().show()
                 true
             }
             R.id.follow_route -> {

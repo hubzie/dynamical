@@ -7,16 +7,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.dynamical.DynamicalApplication
 import com.example.dynamical.R
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.*
+import com.google.android.gms.tasks.Task
 
-class GPS(private val fusedLocationProviderClient: FusedLocationProviderClient) {
+class GPS(private val application: DynamicalApplication) {
+    private val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(application)
     private val _location = MutableLiveData<Location?>()
     val location: LiveData<Location?> = _location
 
-    private inner class Callback : LocationCallback() {
+    private inner class GPSLocationCallback : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             super.onLocationResult(locationResult)
             for (location in locationResult.locations)
@@ -24,25 +23,35 @@ class GPS(private val fusedLocationProviderClient: FusedLocationProviderClient) 
         }
     }
 
-    private val callback = Callback()
+    private val locationCallback = GPSLocationCallback()
 
-    @SuppressLint("MissingPermission")
-    fun start() {
-        val request = LocationRequest.create().apply {
+    private fun getRequest(): LocationRequest {
+        return LocationRequest.create().apply {
             interval = DynamicalApplication.mResources.getInteger(R.integer.GPS_interval).toLong()
             fastestInterval = DynamicalApplication.mResources.getInteger(R.integer.GPS_fastest_interval).toLong()
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
+    }
 
+    fun askForTurningOnGPS(): Task<LocationSettingsResponse> {
+        val settingsRequest = LocationSettingsRequest.Builder()
+            .addLocationRequest(getRequest())
+            .build()
+
+        return LocationServices.getSettingsClient(application).checkLocationSettings(settingsRequest)
+    }
+
+    @SuppressLint("MissingPermission")
+    fun start() {
         fusedLocationProviderClient.requestLocationUpdates(
-            request,
-            callback,
+            getRequest(),
+            locationCallback,
             Looper.getMainLooper()
         )
     }
 
     fun reset() {
-        fusedLocationProviderClient.removeLocationUpdates(callback)
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
         _location.value = null
     }
 }

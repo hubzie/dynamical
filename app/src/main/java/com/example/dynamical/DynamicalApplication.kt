@@ -1,10 +1,12 @@
 package com.example.dynamical
 
+import android.app.Activity
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.res.Resources
+import android.os.Bundle
 import com.example.dynamical.data.RouteDatabase
 import com.example.dynamical.data.RouteRepository
 import kotlinx.coroutines.CoroutineScope
@@ -21,13 +23,27 @@ class DynamicalApplication : Application() {
         const val FOLLOWED_ROUTE = "FOLLOWED_ROUTE"
     }
 
-    val applicationScope = CoroutineScope(SupervisorJob())
+    // Maintain current activity
+    private inner class ApplicationActivityLifecycleCallback : ActivityLifecycleCallbacks {
+        override fun onActivityCreated(activity: Activity, bundle: Bundle?) {}
+        override fun onActivityStarted(activity: Activity) {}
+        override fun onActivityResumed(activity: Activity) { currentActivity = activity }
+        override fun onActivityPaused(activity: Activity) { currentActivity = null }
+        override fun onActivityStopped(activity: Activity) {}
+        override fun onActivitySaveInstanceState(activity: Activity, bundle: Bundle) {}
+        override fun onActivityDestroyed(activity: Activity) {}
+    }
 
+    var currentActivity: Activity? = null
+        private set
+
+    // Database
+    private val applicationScope = CoroutineScope(SupervisorJob())
     private val database by lazy { RouteDatabase.getDatabase(this, applicationScope) }
     val repository by lazy { RouteRepository(database.routeDao()) }
 
-    val sharedPreferences by lazy { getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)!! }
-
+    // Storing current route
+    private val sharedPreferences by lazy { getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)!! }
     var followedRoute: Int? = null
         set(value) {
             sharedPreferences.edit().apply {
@@ -38,6 +54,7 @@ class DynamicalApplication : Application() {
             field = value
         }
 
+    // Setup
     override fun onCreate() {
         super.onCreate()
         mResources = resources
@@ -57,5 +74,8 @@ class DynamicalApplication : Application() {
         }
         (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
             .createNotificationChannel(channel)
+
+        // Maintain currentActivity
+        registerActivityLifecycleCallbacks(ApplicationActivityLifecycleCallback())
     }
 }
