@@ -12,10 +12,10 @@ import androidx.lifecycle.LifecycleService
 import androidx.navigation.NavDeepLinkBuilder
 import com.example.dynamical.DynamicalApplication
 import com.example.dynamical.R
-import com.example.dynamical.mesure.Tracker
-import com.example.dynamical.mesure.Tracker.Companion.distanceToString
-import com.example.dynamical.mesure.Tracker.Companion.getTracker
-import com.example.dynamical.mesure.Tracker.Companion.timeToString
+import com.example.dynamical.measure.Tracker
+import com.example.dynamical.measure.Tracker.Companion.distanceToString
+import com.example.dynamical.measure.Tracker.Companion.getTracker
+import com.example.dynamical.measure.Tracker.Companion.timeToString
 
 class TrackerService : LifecycleService() {
     companion object {

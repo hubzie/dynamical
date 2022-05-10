@@ -1,4 +1,4 @@
-package com.example.dynamical.mesure
+package com.example.dynamical.measure
 
 import android.hardware.Sensor
 import android.hardware.SensorEvent

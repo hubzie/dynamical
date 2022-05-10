@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.dynamical.databinding.MainActivityBinding
-import com.example.dynamical.mesure.Tracker
+import com.example.dynamical.measure.Tracker
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: MainActivityBinding

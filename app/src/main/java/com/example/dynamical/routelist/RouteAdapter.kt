@@ -14,7 +14,7 @@ import com.example.dynamical.R
 import com.example.dynamical.data.Route
 import com.example.dynamical.maps.PolylineFactory
 import com.example.dynamical.maps.PolylineType
-import com.example.dynamical.mesure.Tracker
+import com.example.dynamical.measure.Tracker
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView

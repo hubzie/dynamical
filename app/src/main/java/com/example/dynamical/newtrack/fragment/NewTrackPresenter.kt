@@ -8,8 +8,8 @@ import com.example.dynamical.DynamicalApplication
 import com.example.dynamical.R
 import com.example.dynamical.data.Route
 import com.example.dynamical.maps.PolylineType
-import com.example.dynamical.mesure.Tracker
-import com.example.dynamical.mesure.TrackerViewModel
+import com.example.dynamical.measure.Tracker
+import com.example.dynamical.measure.TrackerViewModel
 import com.example.dynamical.newtrack.service.TrackerService
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline

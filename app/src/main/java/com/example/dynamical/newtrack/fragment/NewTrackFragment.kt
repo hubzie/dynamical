@@ -20,9 +20,9 @@ import com.example.dynamical.data.DatabaseViewModelFactory
 import com.example.dynamical.databinding.NewTrackFragmentBinding
 import com.example.dynamical.maps.MapFragment
 import com.example.dynamical.maps.PolylineType
-import com.example.dynamical.mesure.Tracker
-import com.example.dynamical.mesure.TrackerViewModel
-import com.example.dynamical.mesure.TrackerViewModelFactory
+import com.example.dynamical.measure.Tracker
+import com.example.dynamical.measure.TrackerViewModel
+import com.example.dynamical.measure.TrackerViewModelFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
 import kotlinx.coroutines.launch

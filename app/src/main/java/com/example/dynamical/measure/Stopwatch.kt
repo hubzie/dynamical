@@ -1,4 +1,4 @@
-package com.example.dynamical.mesure
+package com.example.dynamical.measure
 
 import android.os.CountDownTimer
 import androidx.lifecycle.LiveData

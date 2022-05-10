@@ -1,4 +1,4 @@
-package com.example.dynamical.mesure
+package com.example.dynamical.measure
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

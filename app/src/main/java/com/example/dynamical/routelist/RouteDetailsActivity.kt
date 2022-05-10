@@ -15,8 +15,8 @@ import com.example.dynamical.data.Route
 import com.example.dynamical.databinding.RouteDetailsActivityBinding
 import com.example.dynamical.maps.MapFragment
 import com.example.dynamical.maps.PolylineType
-import com.example.dynamical.mesure.Tracker.Companion.distanceToString
-import com.example.dynamical.mesure.Tracker.Companion.timeToString
+import com.example.dynamical.measure.Tracker.Companion.distanceToString
+import com.example.dynamical.measure.Tracker.Companion.timeToString
 import kotlinx.coroutines.launch
 
 class RouteDetailsActivity : AppCompatActivity() {
