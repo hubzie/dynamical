@@ -17,7 +17,7 @@
         tools:layout="@layout/new_track_fragment" />
     <fragment
         android:id="@+id/settings_fragment"
-        android:name="com.example.dynamical.SettingsFragment"
+        android:name="com.example.dynamical.settings.SettingsFragment"
         android:label="@string/settings_title"
         tools:layout="@layout/settings_fragment" />
 </navigation>
