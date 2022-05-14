@@ -19,6 +19,10 @@
     <string name="step_count_label">Step count: %1$s</string>
     <string name="distance_label">Distance: %1$s</string>
 
+    <string name="time_description_label">Time</string>
+    <string name="step_count_description_label">Step count</string>
+    <string name="distance_description_label">Distance</string>
+
     <string name="notification_title">Dynamical</string>
     <string name="notification_pause_button">PAUSE</string>
     <string name="notification_resume_button">RESUME</string>

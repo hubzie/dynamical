@@ -19,6 +19,7 @@ interface NewTrackView {
     fun setDistance(distance: String)
     fun getNewPolyline(type: PolylineType): Polyline
 
+    fun hideTime()
     fun hideStepCount()
     fun hideDistance()
 

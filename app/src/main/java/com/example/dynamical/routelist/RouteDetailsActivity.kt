@@ -27,7 +27,7 @@ class RouteDetailsActivity : AppCompatActivity() {
 
     private lateinit var route: Route
 
-    lateinit var menu: Menu
+    private lateinit var menu: Menu
 
     private val databaseViewModel: DatabaseViewModel by viewModels {
         DatabaseViewModelFactory((application as DynamicalApplication).repository)
@@ -50,13 +50,13 @@ class RouteDetailsActivity : AppCompatActivity() {
         }
 
         route.time.let { binding.dataList.addView(
-                factory.produce(getString(R.string.time_label, timeToString(it)))
+                factory.produce(getString(R.string.time_description_label), timeToString(it))
         ) }
         route.stepCount?.let { binding.dataList.addView(
-            factory.produce(getString(R.string.step_count_label, it.toString()))
+            factory.produce(getString(R.string.step_count_description_label), it.toString())
         ) }
         route.distance?.let { binding.dataList.addView(
-            factory.produce(getString(R.string.distance_label, distanceToString(it)))
+            factory.produce(getString(R.string.distance_description_label), distanceToString(it))
         ) }
 
         setupMenu()
@@ -78,7 +78,7 @@ class RouteDetailsActivity : AppCompatActivity() {
         binding = RouteDetailsActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        factory = RouteDetailsItemFactory(this)
+        factory = RouteDetailsItemFactory(binding.dataList)
 
         setTitle(R.string.route_details_title)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

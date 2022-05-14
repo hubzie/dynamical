@@ -64,6 +64,10 @@ class NewTrackPresenter(
 
         for (route in tracker.route)
             view.getNewPolyline(PolylineType.CURRENT).points = route
+
+        polyline = view.getNewPolyline(PolylineType.CURRENT).apply {
+            tracker.routePart.value?.let { points = it }
+        }
     }
 
     private fun pauseMeasure() {

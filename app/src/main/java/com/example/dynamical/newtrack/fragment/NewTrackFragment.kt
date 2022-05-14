@@ -47,6 +47,9 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
     private var _mapFragment: MapFragment? = null
     private val mapFragment get() = _mapFragment!!
 
+    // Followed track
+    private var followedTrack: List<Polyline> = listOf()
+
     // Interface implementation
     override val lifecycleOwner: LifecycleOwner = this
 
@@ -76,6 +79,7 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
 
     override fun setTime(time: String) {
         binding.timeTextView.text = time
+        binding.timeInfo.visibility = View.VISIBLE
     }
 
     override fun setStepCount(stepCount: String) {
@@ -105,9 +109,12 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
         binding.distanceInfo.visibility = View.GONE
     }
 
+    override fun hideTime() {
+        binding.timeInfo.visibility = View.GONE
+    }
+
 
     override fun onMeasureStart() {
-        binding.timeInfo.visibility = View.VISIBLE
         binding.actionButton.setImageResource(R.drawable.pause)
         binding.endButton.visibility = View.VISIBLE
     }
@@ -122,6 +129,19 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
         binding.actionButton.setImageResource(R.drawable.start)
         binding.endButton.visibility = View.INVISIBLE
         mapFragment.reset()
+        drawFollowedTrack()
+    }
+
+
+    private fun drawFollowedTrack() {
+        lifecycleScope.launch {
+            (requireActivity().application as DynamicalApplication).followedRoute?.let { id ->
+                val route = databaseViewModel.getRouteDetails(id)
+                followedTrack = route.track?.map { part ->
+                    getNewPolyline(PolylineType.FOLLOWED).apply { points = part }
+                } ?: listOf()
+            }
+        }
     }
 
 
@@ -145,7 +165,6 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
         binding.actionButton.setOnClickListener { presenter.onFlipState() }
         binding.endButton.setOnClickListener { presenter.onEnd() }
 
-        var followedTrack: List<Polyline> = listOf()
         binding.unfollowButton.setOnClickListener {
             followedTrack.forEach { polyline -> polyline.remove() }
             it.visibility = View.INVISIBLE
@@ -160,14 +179,7 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
                 trackerViewModel
             )
             presenter.initialize()
-            lifecycleScope.launch {
-                (requireActivity().application as DynamicalApplication).followedRoute?.let { id ->
-                    val route = databaseViewModel.getRouteDetails(id)
-                    followedTrack = route.track?.map { part ->
-                        getNewPolyline(PolylineType.FOLLOWED).apply { points = part }
-                    } ?: listOf()
-                }
-            }
+            drawFollowedTrack()
         }
 
         with(requireActivity().supportFragmentManager.beginTransaction()) {

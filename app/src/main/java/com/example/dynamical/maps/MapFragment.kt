@@ -100,6 +100,8 @@ class MapFragment(private val doTrackPosition: Boolean, private val onReadyCallb
 
     fun reset() {
         marker?.remove()
+        binding.locationButton.visibility = View.GONE
+        followPosition = true
         polylineList.forEach { it.remove() }
         polylineList.clear()
     }
