@@ -56,6 +56,12 @@ class SettingsFragment : Fragment(R.layout.settings_fragment) {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (Firebase.auth.currentUser == null) setUserSignedOut()
+        else setUserSignedIn()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null

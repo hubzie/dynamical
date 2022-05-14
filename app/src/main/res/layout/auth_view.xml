@@ -27,11 +27,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/sign_in_button"
-        android:textAllCaps="false" />
+        android:textAllCaps="false"
+        android:layout_marginBottom="@dimen/user_item_margin"  />
 
     <ProgressBar
         android:id="@+id/sign_in_progress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:layout_marginBottom="@dimen/user_item_margin"  />
+
+    <Button
+        android:id="@+id/sign_up_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/sign_up_button"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/black"
+        android:textAllCaps="false" />
 </LinearLayout>

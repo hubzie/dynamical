@@ -1,5 +1,6 @@
 package com.example.dynamical.settings.auth
 
+import android.content.Intent
 import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +21,7 @@ class AuthView private constructor(
     private val passwordTextView: TextView = view.findViewById(R.id.sign_in_password)
     private val signInButton: Button = view.findViewById(R.id.sign_in_button)
     private val progressBar: ProgressBar = view.findViewById(R.id.sign_in_progress)
+    private val signUpButton: Button = view.findViewById(R.id.sign_up_button)
 
     private val auth = Firebase.auth
 
@@ -27,7 +29,7 @@ class AuthView private constructor(
     private val password: String get() = passwordTextView.text.toString()
 
     init {
-        (view.findViewById(R.id.sign_in_button) as View).setOnClickListener {
+        signInButton.setOnClickListener {
             if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 Toast.makeText(view.context, R.string.incorrect_email_error, Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -45,6 +47,11 @@ class AuthView private constructor(
                     else onSignInFailure()
                 }
         }
+
+        signUpButton.setOnClickListener {
+            val intent = Intent(view.context, SignUpActivity::class.java)
+            view.context.startActivity(intent)
+        }
     }
 
     fun clear() {
@@ -56,6 +63,7 @@ class AuthView private constructor(
     private fun enableView() {
         signInButton.visibility = View.VISIBLE
         progressBar.visibility = View.GONE
+        signUpButton.visibility = View.VISIBLE
 
         emailTextView.isFocusable = true
         emailTextView.isFocusableInTouchMode = true
@@ -68,6 +76,7 @@ class AuthView private constructor(
     private fun disableView() {
         signInButton.visibility = View.GONE
         progressBar.visibility = View.VISIBLE
+        signUpButton.visibility = View.GONE
 
         emailTextView.isFocusable = false
         emailTextView.isEnabled = false
