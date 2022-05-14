@@ -46,17 +46,17 @@ class SignUpActivity : AppCompatActivity() {
         var correct = true
 
         if (binding.name.text.isEmpty()) {
-            binding.name.error = getString(R.string.sign_up_empty_name_error)
+            binding.name.error = getString(R.string.empty_name_error)
             correct = false
         }
 
         if (!Patterns.EMAIL_ADDRESS.matcher(binding.email.text).matches()) {
-            binding.email.error = getString(R.string.sign_up_incorrect_email)
+            binding.email.error = getString(R.string.incorrect_email_error)
             correct = false
         }
 
         if (binding.password.text.toString() != binding.confirmPassword.text.toString()) {
-            binding.confirmPassword.error = getString(R.string.sign_up_password_not_match)
+            binding.confirmPassword.error = getString(R.string.password_not_match_error)
             correct = false
         }
 

@@ -19,9 +19,11 @@ class AuthView private constructor(
 ) {
     private val emailTextView: TextView = view.findViewById(R.id.sign_in_email)
     private val passwordTextView: TextView = view.findViewById(R.id.sign_in_password)
-    private val signInButton: Button = view.findViewById(R.id.sign_in_button)
     private val progressBar: ProgressBar = view.findViewById(R.id.sign_in_progress)
+
+    private val signInButton: Button = view.findViewById(R.id.sign_in_button)
     private val signUpButton: Button = view.findViewById(R.id.sign_up_button)
+    private val resetPasswordButton: Button = view.findViewById(R.id.reset_password_button)
 
     private val auth = Firebase.auth
 
@@ -50,6 +52,11 @@ class AuthView private constructor(
 
         signUpButton.setOnClickListener {
             val intent = Intent(view.context, SignUpActivity::class.java)
+            view.context.startActivity(intent)
+        }
+
+        resetPasswordButton.setOnClickListener {
+            val intent = Intent(view.context, ResetPasswordActivity::class.java)
             view.context.startActivity(intent)
         }
     }

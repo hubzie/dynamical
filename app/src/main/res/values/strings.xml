@@ -36,6 +36,7 @@
 
     <string name="sign_in_button">Sign in</string>
     <string name="sign_up_button">Sign up</string>
+    <string name="reset_password_button">Forgot password?</string>
     <string name="email_hint">Enter e-mail</string>
     <string name="password_hint">Enter password</string>
     <string name="incorrect_email_error">Incorrect email address</string>
@@ -45,15 +46,18 @@
     <string name="sign_out_button">Sign out</string>
 
     <string name="sign_up_title">Sign up</string>
+    <string name="reset_password_title">Reset password</string>
+
     <string name="sign_up_name">Enter name…</string>
     <string name="sign_up_email">Enter e-mail…</string>
     <string name="sign_up_password">Enter password…</string>
     <string name="sign_up_confirm_password">Confirm password…</string>
     <string name="sign_up_submit">Sign up</string>
 
-    <string name="sign_up_empty_name_error">Please insert name</string>
-    <string name="sign_up_incorrect_email">Please insert correct e-mail address</string>
-    <string name="sign_up_password_not_match">Password is not the same</string>
+    <string name="empty_name_error">Please insert name</string>
+    <string name="password_not_match_error">Password is not the same</string>
+
+    <string name="email_sent">Email has been sent</string>
 
     <string name="EXTRA_ROUTE_ID">com.example.dynamical.extra.ROUTE_ID</string>
 </resources>
