@@ -31,6 +31,7 @@
     <string name="follow_route">Follow</string>
     <string name="unfollow_route">Unfollow</string>
 
+    <string name="end_tracking_confirm_message">Do you want to end the tour?</string>
     <string name="delete_confirm_message">Are you sure you want to delete this route?</string>
     <string name="delete_confirm_positive">Yes</string>
     <string name="delete_confirm_negative">No</string>

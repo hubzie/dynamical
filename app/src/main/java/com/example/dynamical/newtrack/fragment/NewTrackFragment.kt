@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -163,7 +164,13 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
 
         // Setup button
         binding.actionButton.setOnClickListener { presenter.onFlipState() }
-        binding.endButton.setOnClickListener { presenter.onEnd() }
+        binding.endButton.setOnClickListener {
+            AlertDialog.Builder(requireContext())
+                .setMessage(R.string.end_tracking_confirm_message)
+                .setPositiveButton(R.string.delete_confirm_positive) { _, _ -> presenter.onEnd() }
+                .setNegativeButton(R.string.delete_confirm_negative) { dialog, _ -> dialog.dismiss() }
+                .create().show()
+        }
 
         binding.unfollowButton.setOnClickListener {
             followedTrack.forEach { polyline -> polyline.remove() }
