@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.text.format.DateFormat
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +15,9 @@ import com.example.dynamical.data.DatabaseViewModel
 import com.example.dynamical.data.DatabaseViewModelFactory
 import com.example.dynamical.data.Route
 import com.example.dynamical.databinding.RouteDetailsActivityBinding
+import com.example.dynamical.firebase.AnonymousSessionException
+import com.example.dynamical.firebase.FirebaseDatabase
+import com.example.dynamical.firebase.NetworkTimeoutException
 import com.example.dynamical.maps.MapFragment
 import com.example.dynamical.maps.PolylineType
 import com.example.dynamical.measure.Tracker.Companion.distanceToString
@@ -65,6 +69,18 @@ class RouteDetailsActivity : AppCompatActivity() {
         setupMenu()
     }
 
+    private val progressDialog by lazy {
+        AlertDialog.Builder(this).setView(R.layout.progress_dialog).create()
+    }
+
+    private fun showLoading() {
+        progressDialog.show()
+    }
+
+    private fun hideLoading() {
+        progressDialog.dismiss()
+    }
+
     private fun setupMenu() {
         if(!::menu.isInitialized || !::route.isInitialized) return
 
@@ -73,6 +89,9 @@ class RouteDetailsActivity : AppCompatActivity() {
             menu.findItem(R.id.unfollow_route).isVisible = false
         else
             menu.findItem(R.id.follow_route).isVisible = false
+
+        if (route.shared)
+            menu.findItem(R.id.share_route).isVisible = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,13 +100,15 @@ class RouteDetailsActivity : AppCompatActivity() {
         binding = RouteDetailsActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Displaying info
         factory = RouteDetailsItemFactory(binding.dataList)
 
+        // Options bar
         setTitle(R.string.route_details_title)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val id = intent.getIntExtra(getString(R.string.EXTRA_ROUTE_ID), -1)
-        lifecycleScope.launch { setup(databaseViewModel.getRouteDetails(id)) }
+        lifecycleScope.launch { setup(databaseViewModel.getRouteDetails(id)!!) }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -109,6 +130,8 @@ class RouteDetailsActivity : AppCompatActivity() {
                 AlertDialog.Builder(this)
                     .setMessage(R.string.delete_confirm_message)
                     .setPositiveButton(R.string.delete_confirm_positive) { _, _ ->
+                        if ((application as DynamicalApplication).followedRoute == route.id)
+                            (application as DynamicalApplication).followedRoute = null
                         databaseViewModel.deleteRoute(route)
                         finish()
                     }
@@ -128,6 +151,37 @@ class RouteDetailsActivity : AppCompatActivity() {
                 (application as DynamicalApplication).followedRoute = null
                 menu.findItem(R.id.follow_route).isVisible = true
                 menu.findItem(R.id.unfollow_route).isVisible = false
+                true
+            }
+            R.id.share_route -> {
+                try {
+                    showLoading()
+                    FirebaseDatabase.shareRoute(route) {
+                        menu.findItem(R.id.share_route).isVisible = false
+                        route.shared = true
+                        databaseViewModel.insertRoute(route)
+                        hideLoading()
+                        Toast.makeText(this, R.string.route_shared, Toast.LENGTH_LONG).show()
+                    }
+                } catch (e : Exception) {
+                    val builder = AlertDialog.Builder(this)
+                        .setNeutralButton(R.string.confirm_button) { dialog, _ ->
+                            dialog.dismiss()
+                        }
+
+                    when(e) {
+                        is NetworkTimeoutException ->
+                            builder.setMessage(R.string.no_connection_error)
+                        is AnonymousSessionException ->
+                            builder.setMessage(R.string.no_user_error)
+                        else ->
+                            builder.setMessage(e.message)
+                    }
+
+                    builder.create().show()
+                    hideLoading()
+                }
+
                 true
             }
             else -> super.onOptionsItemSelected(item)

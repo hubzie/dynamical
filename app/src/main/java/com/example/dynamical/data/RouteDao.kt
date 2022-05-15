@@ -9,9 +9,9 @@ interface RouteDao {
     fun allRoutesOnline(): Flow<List<Route>>
 
     @Query("select * from route_table where id == :id")
-    suspend fun getRouteDetails(id: Int): Route
+    suspend fun getRouteDetails(id: Int): Route?
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRoute(route: Route)
 
     @Delete

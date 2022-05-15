@@ -9,6 +9,7 @@ import java.util.*
 @Entity(tableName = "route_table")
 data class Route(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    var shared: Boolean = false,
     val time: Long,
     val stepCount: Int?,
     val distance: Float?,

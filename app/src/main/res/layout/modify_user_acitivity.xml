@@ -61,7 +61,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/confirm_password"
         android:textAllCaps="false"
-        android:text="@string/modify_sumbit" />
+        android:text="@string/modify_submit" />
 
     <ProgressBar
         android:id="@+id/confirm_progress"
