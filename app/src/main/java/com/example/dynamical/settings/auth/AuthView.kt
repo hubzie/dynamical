@@ -46,7 +46,7 @@ class AuthView private constructor(
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) onSignInSuccessful()
-                    else onSignInFailure()
+                    else onSignInFailure(task.exception!!.message)
                 }
         }
 
@@ -95,8 +95,8 @@ class AuthView private constructor(
 
     private fun onSignInSuccessful() = onSuccessCallback()
 
-    private fun onSignInFailure() {
-        Toast.makeText(view.context, R.string.invalid_credentials_error, Toast.LENGTH_SHORT).show()
+    private fun onSignInFailure(text: String?) {
+        Toast.makeText(view.context, text, Toast.LENGTH_LONG).show()
         enableView()
     }
 

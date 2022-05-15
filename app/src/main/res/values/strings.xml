@@ -40,7 +40,6 @@
     <string name="email_hint">Enter e-mail</string>
     <string name="password_hint">Enter password</string>
     <string name="incorrect_email_error">Incorrect email address</string>
-    <string name="invalid_credentials_error">Invalid email or password</string>
 
     <string name="sign_out_button">Sign out</string>
     <string name="modify_button">Edit</string>
