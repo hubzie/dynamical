@@ -1,6 +1,7 @@
 package com.example.dynamical.routelist
 
 import android.content.Intent
+import android.text.format.DateFormat
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -29,6 +30,7 @@ class RouteAdapter : ListAdapter<Route, RouteAdapter.ViewHolder>(RouteDiff()) {
         private val process: ProgressBar = view.findViewById(R.id.progress)
         private val mapView: MapView = view.findViewById(R.id.map_item_preview)
         private val description: LinearLayout = view.findViewById(R.id.item_description)
+        private val dateLabel: TextView = view.findViewById(R.id.date_label)
 
         private lateinit var map: GoogleMap
 
@@ -48,7 +50,7 @@ class RouteAdapter : ListAdapter<Route, RouteAdapter.ViewHolder>(RouteDiff()) {
             description.addView(TextView(description.context).apply {
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
                 )
                 setTextSize(
                     TypedValue.COMPLEX_UNIT_PX,
@@ -100,6 +102,8 @@ class RouteAdapter : ListAdapter<Route, RouteAdapter.ViewHolder>(RouteDiff()) {
         fun bind(idx: Int) {
             route = getItem(idx)
 
+            dateLabel.text = DateFormat.getDateFormat(view.context.applicationContext)
+                .format(route.date)
             addInfo(view.context.getString(R.string.time_label, Tracker.timeToString(route.time)))
             route.distance?.let {
                 addInfo(view.context.getString(R.string.distance_label, Tracker.distanceToString(it)))

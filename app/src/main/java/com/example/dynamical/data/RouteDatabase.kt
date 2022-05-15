@@ -5,13 +5,10 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import androidx.sqlite.db.SupportSQLiteDatabase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Database(
     entities = [Route::class],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(RouteConverters::class)
@@ -21,36 +18,19 @@ abstract class RouteDatabase : RoomDatabase() {
     companion object {
         private var INSTANCE: RouteDatabase? = null
 
-        fun getDatabase(context: Context, scope: CoroutineScope): RouteDatabase {
+        fun getDatabase(context: Context): RouteDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     RouteDatabase::class.java,
                     "route_database"
                 )
-                    .addCallback(DatabaseCallback(scope))
                     .fallbackToDestructiveMigration()
+                    .addMigrations(Migrations.MIGRATION_2_3)
                     .build()
                 INSTANCE = instance
                 return instance
             }
-        }
-    }
-
-    private class DatabaseCallback(
-        private val scope: CoroutineScope
-    ) : RoomDatabase.Callback() {
-        override fun onCreate(db: SupportSQLiteDatabase) {
-            super.onCreate(db)
-            INSTANCE?.let { database ->
-                scope.launch {
-                    populateDatabase(database.routeDao())
-                }
-            }
-        }
-
-        suspend fun populateDatabase(routeDao: RouteDao) {
-            routeDao.clear()
         }
     }
 }

@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.google.android.gms.maps.model.LatLng
+import java.util.*
 
 @Entity(tableName = "route_table")
 data class Route(
@@ -12,5 +13,7 @@ data class Route(
     val stepCount: Int?,
     val distance: Float?,
     @TypeConverters(RouteConverters::class)
-    val track: List<List<LatLng>>?
+    val track: List<List<LatLng>>?,
+    @TypeConverters(RouteConverters::class)
+    val date: Date
 )

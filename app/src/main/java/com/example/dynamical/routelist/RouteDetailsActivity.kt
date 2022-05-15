@@ -1,6 +1,7 @@
 package com.example.dynamical.routelist
 
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
@@ -49,8 +50,10 @@ class RouteDetailsActivity : AppCompatActivity() {
             commit()
         }
 
+        binding.dateLabel.text = DateFormat.getDateFormat(applicationContext)
+            .format(route.date)
         route.time.let { binding.dataList.addView(
-                factory.produce(getString(R.string.time_description_label), timeToString(it))
+            factory.produce(getString(R.string.time_description_label), timeToString(it))
         ) }
         route.stepCount?.let { binding.dataList.addView(
             factory.produce(getString(R.string.step_count_description_label), it.toString())

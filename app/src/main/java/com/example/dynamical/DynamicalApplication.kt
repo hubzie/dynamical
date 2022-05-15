@@ -9,8 +9,6 @@ import android.content.res.Resources
 import android.os.Bundle
 import com.example.dynamical.data.RouteDatabase
 import com.example.dynamical.data.RouteRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
 
 class DynamicalApplication : Application() {
     // Constants
@@ -38,8 +36,7 @@ class DynamicalApplication : Application() {
         private set
 
     // Database
-    private val applicationScope = CoroutineScope(SupervisorJob())
-    private val database by lazy { RouteDatabase.getDatabase(this, applicationScope) }
+    private val database by lazy { RouteDatabase.getDatabase(this) }
     val repository by lazy { RouteRepository(database.routeDao()) }
 
     // Storing current route

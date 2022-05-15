@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RouteDao {
-    @Query("select * from route_table")
+    @Query("select * from route_table order by date desc")
     fun allRoutesOnline(): Flow<List<Route>>
 
     @Query("select * from route_table where id == :id")
@@ -16,7 +16,4 @@ interface RouteDao {
 
     @Delete
     suspend fun deleteRoute(route: Route)
-
-    @Query("delete from route_table")
-    suspend fun clear()
 }

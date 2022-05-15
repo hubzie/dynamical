@@ -13,6 +13,7 @@ import com.example.dynamical.measure.TrackerViewModel
 import com.example.dynamical.newtrack.service.TrackerService
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
+import java.util.*
 
 class NewTrackPresenter(
     private val view: NewTrackView,
@@ -119,7 +120,8 @@ class NewTrackPresenter(
                 time = tracker.time.value ?: 0L,
                 stepCount = tracker.stepCount.value,
                 distance = tracker.distance.value,
-                track = tracker.route
+                track = tracker.route,
+                date = Calendar.getInstance().time
             )
             view.databaseViewModel.insertRoute(route)
             view.setLocation(null)
