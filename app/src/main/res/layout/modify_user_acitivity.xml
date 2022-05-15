@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="@dimen/user_view_margin"
+    tools:context=".settings.auth.ModifyUserActivity" >
+
+    <EditText
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/sign_up_name"
+        android:autofillHints="username"
+        android:inputType="text"
+        android:layout_marginBottom="@dimen/user_item_margin"  />
+
+    <EditText
+        android:id="@+id/email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/sign_up_email"
+        android:autofillHints="emailAddress"
+        android:inputType="textEmailAddress"
+        android:layout_marginBottom="@dimen/user_item_margin"  />
+
+    <EditText
+        android:id="@+id/old_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/email"
+        android:hint="@string/modify_user_old_password"
+        android:autofillHints="password"
+        android:inputType="textPassword"
+        android:layout_marginBottom="@dimen/user_item_margin"  />
+
+    <EditText
+        android:id="@+id/new_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/modify_user_new_password"
+        android:autofillHints="password"
+        android:inputType="textPassword"
+        android:layout_marginBottom="@dimen/user_item_margin"  />
+
+    <EditText
+        android:id="@+id/confirm_new_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/modify_user_confirm_new_password"
+        android:autofillHints="password"
+        android:inputType="textPassword"
+        android:layout_marginBottom="@dimen/user_item_margin"  />
+
+    <Button
+        android:id="@+id/confirm_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/confirm_password"
+        android:textAllCaps="false"
+        android:text="@string/modify_sumbit" />
+
+    <ProgressBar
+        android:id="@+id/confirm_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+</LinearLayout>

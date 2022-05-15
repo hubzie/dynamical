@@ -1,5 +1,6 @@
 package com.example.dynamical.settings
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.example.dynamical.R
 import com.example.dynamical.databinding.SettingsFragmentBinding
 import com.example.dynamical.settings.auth.AuthView
+import com.example.dynamical.settings.auth.ModifyUserActivity
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -48,6 +50,10 @@ class SettingsFragment : Fragment(R.layout.settings_fragment) {
         binding.signOutButton.setOnClickListener {
             auth.signOut()
             setUserSignedOut()
+        }
+        binding.modifyButton.setOnClickListener {
+            val intent = Intent(requireContext(), ModifyUserActivity::class.java)
+            requireContext().startActivity(intent)
         }
 
         if (Firebase.auth.currentUser == null) setUserSignedOut()

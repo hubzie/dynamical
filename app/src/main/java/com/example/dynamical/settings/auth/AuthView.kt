@@ -71,6 +71,7 @@ class AuthView private constructor(
         signInButton.visibility = View.VISIBLE
         progressBar.visibility = View.GONE
         signUpButton.visibility = View.VISIBLE
+        resetPasswordButton.visibility = View.VISIBLE
 
         emailTextView.isFocusable = true
         emailTextView.isFocusableInTouchMode = true
@@ -84,6 +85,7 @@ class AuthView private constructor(
         signInButton.visibility = View.GONE
         progressBar.visibility = View.VISIBLE
         signUpButton.visibility = View.GONE
+        resetPasswordButton.visibility = View.GONE
 
         emailTextView.isFocusable = false
         emailTextView.isEnabled = false

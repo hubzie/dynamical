@@ -55,6 +55,11 @@ class SignUpActivity : AppCompatActivity() {
             correct = false
         }
 
+        if (binding.password.text.isEmpty()) {
+            binding.password.error = getString(R.string.missing_password_error)
+            correct = false
+        }
+
         if (binding.password.text.toString() != binding.confirmPassword.text.toString()) {
             binding.confirmPassword.error = getString(R.string.password_not_match_error)
             correct = false
