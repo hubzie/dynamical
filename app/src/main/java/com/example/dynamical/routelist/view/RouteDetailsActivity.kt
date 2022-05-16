@@ -1,4 +1,4 @@
-package com.example.dynamical.routelist
+package com.example.dynamical.routelist.view
 
 import android.os.Bundle
 import android.text.format.DateFormat
@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import com.example.dynamical.DynamicalApplication
 import com.example.dynamical.R
 import com.example.dynamical.data.DatabaseViewModel
@@ -22,7 +21,6 @@ import com.example.dynamical.maps.MapFragment
 import com.example.dynamical.maps.PolylineType
 import com.example.dynamical.measure.Tracker.Companion.distanceToString
 import com.example.dynamical.measure.Tracker.Companion.timeToString
-import kotlinx.coroutines.launch
 
 class RouteDetailsActivity : AppCompatActivity() {
     private lateinit var binding: RouteDetailsActivityBinding
@@ -85,7 +83,7 @@ class RouteDetailsActivity : AppCompatActivity() {
         if(!::menu.isInitialized || !::route.isInitialized) return
 
         val followedRoute = (application as DynamicalApplication).followedRoute
-        if(followedRoute == null || followedRoute != route.id)
+        if(followedRoute?.id != route.id)
             menu.findItem(R.id.unfollow_route).isVisible = false
         else
             menu.findItem(R.id.follow_route).isVisible = false
@@ -107,8 +105,8 @@ class RouteDetailsActivity : AppCompatActivity() {
         setTitle(R.string.route_details_title)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val id = intent.getIntExtra(getString(R.string.EXTRA_ROUTE_ID), -1)
-        lifecycleScope.launch { setup(databaseViewModel.getRouteDetails(id)!!) }
+        val route: Route = intent.getParcelableExtra(getString(R.string.EXTRA_ROUTE))!!
+        setup(route)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -130,7 +128,7 @@ class RouteDetailsActivity : AppCompatActivity() {
                 AlertDialog.Builder(this)
                     .setMessage(R.string.delete_confirm_message)
                     .setPositiveButton(R.string.delete_confirm_positive) { _, _ ->
-                        if ((application as DynamicalApplication).followedRoute == route.id)
+                        if ((application as DynamicalApplication).followedRoute?.id == route.id)
                             (application as DynamicalApplication).followedRoute = null
                         databaseViewModel.deleteRoute(route)
                         finish()
@@ -142,7 +140,7 @@ class RouteDetailsActivity : AppCompatActivity() {
                 true
             }
             R.id.follow_route -> {
-                (application as DynamicalApplication).followedRoute = route.id
+                (application as DynamicalApplication).followedRoute = route
                 menu.findItem(R.id.follow_route).isVisible = false
                 menu.findItem(R.id.unfollow_route).isVisible = true
                 true

@@ -66,7 +66,7 @@
         app:layout_constraintTop_toBottomOf="@id/map_fragment_container">
 
         <LinearLayout
-            android:id="@+id/left_laout"
+            android:id="@+id/left_layout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginEnd="@dimen/margin"
@@ -124,7 +124,7 @@
             android:layout_marginStart="@dimen/margin"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/left_laout">
+            app:layout_constraintStart_toEndOf="@id/left_layout">
 
             <LinearLayout
                 android:id="@+id/step_count_info"

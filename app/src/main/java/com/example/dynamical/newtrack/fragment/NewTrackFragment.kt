@@ -136,9 +136,8 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
 
     private fun drawFollowedTrack() {
         lifecycleScope.launch {
-            (requireActivity().application as DynamicalApplication).followedRoute?.let { id ->
-                val route = databaseViewModel.getRouteDetails(id)
-                followedTrack = route?.track?.map { part ->
+            (requireActivity().application as DynamicalApplication).followedRoute?.let { route ->
+                followedTrack = route.track?.map { part ->
                     getNewPolyline(PolylineType.FOLLOWED).apply { points = part }
                 } ?: listOf()
             }

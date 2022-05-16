@@ -11,21 +11,33 @@ class FirebaseDatabase {
     companion object {
         private const val COLLECTION_NAME = "route_table"
 
-        private data class GlobalRoute(
-            val time: Long,
-            val stepCount: Int?,
-            val distance: Float?,
-            val track: String?,
-            val date: Long
+        data class GlobalRoute(
+            val time: Long = 0,
+            val stepCount: Int? = null,
+            val distance: Float? = null,
+            val track: String? = null,
+            val date: Long = 0
         )
 
-        private fun toGlobalRoute(route: Route): GlobalRoute {
+        @Suppress("MemberVisibilityCanBePrivate")
+        fun toGlobalRoute(route: Route): GlobalRoute {
             return GlobalRoute(
                 time = route.time,
                 stepCount = route.stepCount,
                 distance = route.distance,
                 track = RouteConverters().fromTrack(route.track),
                 date = RouteConverters().fromDate(route.date)
+            )
+        }
+
+        fun fromGlobalRoute(route: GlobalRoute): Route {
+            return Route(
+                shared = true,
+                time = route.time,
+                stepCount = route.stepCount,
+                distance = route.distance,
+                track = RouteConverters().toTrack(route.track),
+                date = RouteConverters().toDate(route.date)
             )
         }
 

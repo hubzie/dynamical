@@ -115,11 +115,11 @@ class MapFragment(private val doTrackPosition: Boolean, private val onReadyCallb
                 boundsBuilder.include(point)
             }
 
-        if (count > 0) {
+        try {
             val padding =
                 (resources.getDimension(R.dimen.map_zoom_padding) / resources.displayMetrics.density).toInt()
             map.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), padding))
-        }
+        } catch (e : Exception) {}
     }
 
     fun newPolyline(type: PolylineType): Polyline {

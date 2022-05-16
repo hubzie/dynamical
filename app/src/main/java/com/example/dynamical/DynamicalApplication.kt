@@ -7,8 +7,11 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.res.Resources
 import android.os.Bundle
+import com.example.dynamical.data.Route
 import com.example.dynamical.data.RouteDatabase
 import com.example.dynamical.data.RouteRepository
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class DynamicalApplication : Application() {
     // Constants
@@ -41,25 +44,22 @@ class DynamicalApplication : Application() {
 
     // Storing current route
     private val sharedPreferences by lazy { getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)!! }
-    var followedRoute: Int? = null
+    var followedRoute: Route?
         set(value) {
             sharedPreferences.edit().apply {
-                value?.let { putInt(FOLLOWED_ROUTE, it) }
+                value?.let { putString(FOLLOWED_ROUTE, Gson().toJson(it)) }
                     ?: remove(FOLLOWED_ROUTE)
                 apply()
             }
-            field = value
         }
+        get() = sharedPreferences.getString(FOLLOWED_ROUTE, null)?.let {
+                Gson().fromJson(it, object : TypeToken<Route>() {}.type) as Route
+            }
 
     // Setup
     override fun onCreate() {
         super.onCreate()
         mResources = resources
-
-        // Load followed route
-        followedRoute = if(sharedPreferences.contains(FOLLOWED_ROUTE))
-            sharedPreferences.getInt(FOLLOWED_ROUTE, 0)
-        else null
 
         // Create notification channel
         val channel = NotificationChannel(

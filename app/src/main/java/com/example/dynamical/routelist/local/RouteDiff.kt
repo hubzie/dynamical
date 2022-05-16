@@ -1,4 +1,4 @@
-package com.example.dynamical.routelist
+package com.example.dynamical.routelist.local
 
 import androidx.recyclerview.widget.DiffUtil
 import com.example.dynamical.data.Route

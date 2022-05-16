@@ -1,11 +1,14 @@
 package com.example.dynamical.data
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.google.android.gms.maps.model.LatLng
+import kotlinx.parcelize.Parcelize
 import java.util.*
 
+@Parcelize
 @Entity(tableName = "route_table")
 data class Route(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
@@ -17,4 +20,4 @@ data class Route(
     val track: List<List<LatLng>>?,
     @TypeConverters(RouteConverters::class)
     val date: Date
-)
+) : Parcelable

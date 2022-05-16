@@ -8,7 +8,6 @@ import kotlinx.coroutines.launch
 
 class DatabaseViewModel(private val routeRepository: RouteRepository) : ViewModel() {
     val allRoutesOnline: LiveData<List<Route>> = routeRepository.allRoutesOnline.asLiveData()
-    suspend fun getRouteDetails(id: Int): Route? = routeRepository.getRouteDetails(id)
     fun insertRoute(route: Route) = viewModelScope.launch {
         routeRepository.insertRoute(route)
     }

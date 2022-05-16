@@ -24,6 +24,7 @@ class NewTrackPresenter(
 
     private var polyline: Polyline? = null
 
+    @Suppress("ObjectLiteralToLambda")
     fun initialize() {
         // Some random stuff happens here, so objects are required instead of lambdas
         // https://stackoverflow.com/questions/47025233/android-lifecycle-library-cannot-add-the-same-observer-with-different-lifecycle

@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         navigationBar.setupWithNavController(mainView.navController)
     }
 
-    val resultLauncher = registerForActivityResult(StartIntentSenderForResult()) { _ ->
+    val resultLauncher = registerForActivityResult(StartIntentSenderForResult()) {
         Tracker.getTracker(application).forceStart()
     }
 }

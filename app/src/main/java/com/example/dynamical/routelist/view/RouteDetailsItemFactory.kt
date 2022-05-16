@@ -1,4 +1,4 @@
-package com.example.dynamical.routelist
+package com.example.dynamical.routelist.view
 
 import android.view.LayoutInflater
 import android.view.View

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/route_list_fragment"
-        android:name="com.example.dynamical.routelist.RouteListFragment"
+        android:name="com.example.dynamical.routelist.view.RouteListFragment"
         android:label="@string/route_list_title"
         tools:layout="@layout/route_list_fragment" />
     <fragment
