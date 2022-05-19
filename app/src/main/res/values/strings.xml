@@ -78,7 +78,7 @@
 
     <string name="loading_message">Loading…</string>
 
-    <string name="local_list_title">Your routes</string>
+    <string name="local_list_title">My routes</string>
     <string name="global_list_title">Explore</string>
 
     <string name="EXTRA_ROUTE">com.example.dynamical.extra.ROUTE</string>
