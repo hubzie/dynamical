@@ -14,6 +14,10 @@
         android:icon="@drawable/share"
         android:title="@string/share_route" />
     <item
+        android:id="@+id/unshare_route"
+        android:icon="@drawable/unshare"
+        android:title="@string/unshare_route" />
+    <item
         android:id="@+id/delete_route"
         android:icon="@drawable/delete"
         android:title="@string/delete_route" />

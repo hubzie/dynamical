@@ -21,6 +21,8 @@ import com.example.dynamical.maps.MapFragment
 import com.example.dynamical.maps.PolylineType
 import com.example.dynamical.measure.Tracker.Companion.distanceToString
 import com.example.dynamical.measure.Tracker.Companion.timeToString
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class RouteDetailsActivity : AppCompatActivity() {
     private lateinit var binding: RouteDetailsActivityBinding
@@ -28,41 +30,11 @@ class RouteDetailsActivity : AppCompatActivity() {
 
     private lateinit var mapFragment: MapFragment
     private lateinit var route: Route
+    private var isGlobal: Boolean = false
     private lateinit var menu: Menu
 
     private val databaseViewModel: DatabaseViewModel by viewModels {
         DatabaseViewModelFactory((application as DynamicalApplication).repository)
-    }
-
-    private fun setup(route: Route) {
-        this.route = route
-
-        mapFragment = MapFragment(false) {
-            route.track?.let { track ->
-                for (part in track)
-                    mapFragment.newPolyline(PolylineType.CURRENT).points = part
-                mapFragment.fitZoom()
-            }
-        }
-
-        with(supportFragmentManager.beginTransaction()) {
-            replace(R.id.map_fragment_container, mapFragment)
-            commit()
-        }
-
-        binding.dateLabel.text = DateFormat.getDateFormat(applicationContext)
-            .format(route.date)
-        route.time.let { binding.dataList.addView(
-            factory.produce(getString(R.string.time_description_label), timeToString(it))
-        ) }
-        route.stepCount?.let { binding.dataList.addView(
-            factory.produce(getString(R.string.step_count_description_label), it.toString())
-        ) }
-        route.distance?.let { binding.dataList.addView(
-            factory.produce(getString(R.string.distance_description_label), distanceToString(it))
-        ) }
-
-        setupMenu()
     }
 
     private val progressDialog by lazy {
@@ -71,11 +43,9 @@ class RouteDetailsActivity : AppCompatActivity() {
             .setCancelable(false)
             .create()
     }
-
     private fun showLoading() {
         progressDialog.show()
     }
-
     private fun hideLoading() {
         progressDialog.dismiss()
     }
@@ -89,8 +59,13 @@ class RouteDetailsActivity : AppCompatActivity() {
         else
             menu.findItem(R.id.follow_route).isVisible = false
 
-        if (route.globalId != null)
+        if (isGlobal || route.globalId != null)
             menu.findItem(R.id.share_route).isVisible = false
+        if (route.globalId == null || route.owner == null || route.owner != Firebase.auth.currentUser?.uid)
+            menu.findItem(R.id.unshare_route).isVisible = false
+
+        if (isGlobal)
+            menu.findItem(R.id.delete_route).isVisible = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -106,14 +81,42 @@ class RouteDetailsActivity : AppCompatActivity() {
         setTitle(R.string.route_details_title)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val route: Route = intent.getParcelableExtra(getString(R.string.EXTRA_ROUTE))!!
-        val isGlobal = intent.getBooleanExtra(
+        route = intent.getParcelableExtra(getString(R.string.EXTRA_ROUTE))!!
+        isGlobal = intent.getBooleanExtra(
             getString(R.string.EXTRA_ROUTE_IS_GLOBAL),
             false
         )
-        setup(route)
-    }
 
+        // Setup view
+        mapFragment = MapFragment(false) {
+            route.track?.let { track ->
+                for (part in track)
+                    mapFragment.newPolyline(PolylineType.CURRENT).points = part
+                mapFragment.fitZoom()
+            }
+        }
+
+        with(supportFragmentManager.beginTransaction()) {
+            replace(R.id.map_fragment_container, mapFragment)
+            commit()
+        }
+
+        if (isGlobal && route.ownerName != null)
+            binding.ownerNameLabel.text = getString(R.string.owner_label, route.ownerName)
+        binding.dateLabel.text = DateFormat.getDateFormat(applicationContext)
+            .format(route.date)
+        route.time.let { binding.dataList.addView(
+            factory.produce(getString(R.string.time_description_label), timeToString(it))
+        ) }
+        route.stepCount?.let { binding.dataList.addView(
+            factory.produce(getString(R.string.step_count_description_label), it.toString())
+        ) }
+        route.distance?.let { binding.dataList.addView(
+            factory.produce(getString(R.string.distance_description_label), distanceToString(it))
+        ) }
+
+        setupMenu()
+    }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.route_details_menu, menu)
 
@@ -123,6 +126,105 @@ class RouteDetailsActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
+    private fun deleteRoute() {
+        AlertDialog.Builder(this)
+            .setMessage(R.string.delete_confirm_message)
+            .setPositiveButton(R.string.delete_confirm_positive) { _, _ ->
+                if ((application as DynamicalApplication).followedRoute?.id == route.id)
+                    (application as DynamicalApplication).followedRoute = null
+                databaseViewModel.deleteRoute(route)
+                finish()
+            }
+            .setNegativeButton(R.string.delete_confirm_negative) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create().show()
+    }
+
+    private fun followRoute() {
+        (application as DynamicalApplication).followedRoute = route
+        menu.findItem(R.id.follow_route).isVisible = false
+        menu.findItem(R.id.unfollow_route).isVisible = true
+    }
+    private fun unfollowRoute() {
+        (application as DynamicalApplication).followedRoute = null
+        menu.findItem(R.id.follow_route).isVisible = true
+        menu.findItem(R.id.unfollow_route).isVisible = false
+    }
+
+    private fun shareRoute() {
+        try {
+            showLoading()
+            FirebaseDatabase.shareRoute(route) { globalId, globalRoute ->
+                menu.findItem(R.id.share_route).isVisible = false
+                menu.findItem(R.id.unshare_route).isVisible = true
+
+                route.globalId = globalId
+                route.owner = globalRoute.owner
+                route.ownerName = globalRoute.ownerName
+
+                databaseViewModel.insertRoute(route)
+                hideLoading()
+                Toast.makeText(this, R.string.route_shared_monit, Toast.LENGTH_LONG).show()
+            }
+        } catch (e : Exception) {
+            val builder = AlertDialog.Builder(this)
+                .setNeutralButton(R.string.confirm_button) { dialog, _ ->
+                    dialog.dismiss()
+                }
+
+            when(e) {
+                is NetworkTimeoutException ->
+                    builder.setMessage(R.string.no_connection_error)
+                is AnonymousSessionException ->
+                    builder.setMessage(R.string.no_user_error)
+                else ->
+                    builder.setMessage(e.localizedMessage)
+            }
+
+            builder.create().show()
+            hideLoading()
+        }
+    }
+    private fun unshareRoute() {
+        try {
+            showLoading()
+            FirebaseDatabase.unshareRoute(route) {
+                if (isGlobal)
+                    finish()
+                else {
+                    menu.findItem(R.id.share_route).isVisible = true
+                    menu.findItem(R.id.unshare_route).isVisible = false
+
+                    route.globalId = null
+                    route.owner = null
+                    route.ownerName = null
+
+                    databaseViewModel.insertRoute(route)
+                    hideLoading()
+                    Toast.makeText(this, R.string.route_unshared_monit, Toast.LENGTH_LONG).show()
+                }
+            }
+        } catch (e : Exception) {
+            val builder = AlertDialog.Builder(this)
+                .setNeutralButton(R.string.confirm_button) { dialog, _ ->
+                    dialog.dismiss()
+                }
+
+            when(e) {
+                is NetworkTimeoutException ->
+                    builder.setMessage(R.string.no_connection_error)
+                is AnonymousSessionException ->
+                    builder.setMessage(R.string.no_user_error)
+                else ->
+                    builder.setMessage(e.localizedMessage)
+            }
+
+            builder.create().show()
+            hideLoading()
+        }
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
@@ -130,65 +232,23 @@ class RouteDetailsActivity : AppCompatActivity() {
                 true
             }
             R.id.delete_route -> {
-                AlertDialog.Builder(this)
-                    .setMessage(R.string.delete_confirm_message)
-                    .setPositiveButton(R.string.delete_confirm_positive) { _, _ ->
-                        if ((application as DynamicalApplication).followedRoute?.id == route.id)
-                            (application as DynamicalApplication).followedRoute = null
-                        databaseViewModel.deleteRoute(route)
-                        finish()
-                    }
-                    .setNegativeButton(R.string.delete_confirm_negative) { dialog, _ ->
-                        dialog.dismiss()
-                    }
-                    .create().show()
+                deleteRoute()
                 true
             }
             R.id.follow_route -> {
-                (application as DynamicalApplication).followedRoute = route
-                menu.findItem(R.id.follow_route).isVisible = false
-                menu.findItem(R.id.unfollow_route).isVisible = true
+                followRoute()
                 true
             }
             R.id.unfollow_route -> {
-                (application as DynamicalApplication).followedRoute = null
-                menu.findItem(R.id.follow_route).isVisible = true
-                menu.findItem(R.id.unfollow_route).isVisible = false
+                unfollowRoute()
                 true
             }
             R.id.share_route -> {
-                try {
-                    showLoading()
-                    FirebaseDatabase.shareRoute(route) { globalId, globalRoute ->
-                        menu.findItem(R.id.share_route).isVisible = false
-
-                        route.globalId = globalId
-                        route.owner = globalRoute.owner
-                        route.ownerName = globalRoute.ownerName
-
-                        databaseViewModel.insertRoute(route)
-                        hideLoading()
-                        Toast.makeText(this, R.string.route_shared, Toast.LENGTH_LONG).show()
-                    }
-                } catch (e : Exception) {
-                    val builder = AlertDialog.Builder(this)
-                        .setNeutralButton(R.string.confirm_button) { dialog, _ ->
-                            dialog.dismiss()
-                        }
-
-                    when(e) {
-                        is NetworkTimeoutException ->
-                            builder.setMessage(R.string.no_connection_error)
-                        is AnonymousSessionException ->
-                            builder.setMessage(R.string.no_user_error)
-                        else ->
-                            builder.setMessage(e.message)
-                    }
-
-                    builder.create().show()
-                    hideLoading()
-                }
-
+                shareRoute()
+                true
+            }
+            R.id.unshare_route -> {
+                unshareRoute()
                 true
             }
             else -> super.onOptionsItemSelected(item)
