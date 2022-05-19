@@ -12,7 +12,11 @@ import java.util.*
 @Entity(tableName = "route_table")
 data class Route(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    var shared: Boolean = false,
+
+    var globalId: String? = null,
+    var owner: String? = null,
+    var ownerName: String? = null,
+
     val time: Long,
     val stepCount: Int?,
     val distance: Float?,

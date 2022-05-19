@@ -1,7 +1,7 @@
 package com.example.dynamical.firebase
 
 import com.example.dynamical.data.Route
-import com.example.dynamical.data.RouteConverters
+import com.example.dynamical.firebase.GlobalRoute.Companion.createGlobalRoute
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ktx.firestore
@@ -11,44 +11,15 @@ class FirebaseDatabase {
     companion object {
         private const val COLLECTION_NAME = "route_table"
 
-        data class GlobalRoute(
-            val time: Long = 0,
-            val stepCount: Int? = null,
-            val distance: Float? = null,
-            val track: String? = null,
-            val date: Long = 0
-        )
-
-        @Suppress("MemberVisibilityCanBePrivate")
-        fun toGlobalRoute(route: Route): GlobalRoute {
-            return GlobalRoute(
-                time = route.time,
-                stepCount = route.stepCount,
-                distance = route.distance,
-                track = RouteConverters().fromTrack(route.track),
-                date = RouteConverters().fromDate(route.date)
-            )
-        }
-
-        fun fromGlobalRoute(route: GlobalRoute): Route {
-            return Route(
-                shared = true,
-                time = route.time,
-                stepCount = route.stepCount,
-                distance = route.distance,
-                track = RouteConverters().toTrack(route.track),
-                date = RouteConverters().toDate(route.date)
-            )
-        }
-
-        fun shareRoute(route: Route, callback: () -> Unit) {
+        fun shareRoute(route: Route, callback: (String, GlobalRoute) -> Unit) {
             if (Firebase.auth.currentUser == null)
                 throw AnonymousSessionException()
 
             val db = Firebase.firestore
+            val globalRoute = createGlobalRoute(route, Firebase.auth.currentUser)
             db.collection(COLLECTION_NAME)
-                .add(toGlobalRoute(route))
-                .addOnSuccessListener { callback() }
+                .add(globalRoute)
+                .addOnSuccessListener { callback(it.id, globalRoute)}
                 .addOnFailureListener {
                     val e = it as FirebaseFirestoreException
                     if (e.code == FirebaseFirestoreException.Code.UNAUTHENTICATED)

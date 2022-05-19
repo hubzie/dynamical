@@ -15,7 +15,7 @@ class RoomRouteAdapter : ListAdapter<Route, RouteViewHolder>(RouteDiff()) {
     }
 
     override fun onBindViewHolder(holder: RouteViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), false)
     }
 
     override fun onViewRecycled(holder: RouteViewHolder) {

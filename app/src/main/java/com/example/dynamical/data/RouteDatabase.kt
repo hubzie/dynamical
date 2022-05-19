@@ -8,7 +8,7 @@ import androidx.room.TypeConverters
 
 @Database(
     entities = [Route::class],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 @TypeConverters(RouteConverters::class)
@@ -26,10 +26,6 @@ abstract class RouteDatabase : RoomDatabase() {
                     "route_database"
                 )
                     .fallbackToDestructiveMigration()
-                    .addMigrations(
-                        Migrations.MIGRATION_2_3,
-                        Migrations.MIGRATION_3_4
-                    )
                     .build()
                 INSTANCE = instance
                 return instance

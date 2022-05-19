@@ -13,6 +13,8 @@
 
     <string name="permission_denied_toast">Required permissions denied</string>
 
+    <string name="owner_label">Share by: %1$s</string>
+
     <string name="time_label">Time: %1$s</string>
     <string name="step_count_label">Step count: %1$s</string>
     <string name="distance_label">Distance: %1$s</string>
@@ -77,5 +79,6 @@
     <string name="local_list_title">Your routes</string>
     <string name="global_list_title">Explore</string>
 
-    <string name="EXTRA_ROUTE">com.example.dynamical.extra.ROUTE_ID</string>
+    <string name="EXTRA_ROUTE">com.example.dynamical.extra.ROUTE</string>
+    <string name="EXTRA_ROUTE_IS_GLOBAL">com.example.dynamical.extra.ROUTE_IS_SHARED</string>
 </resources>

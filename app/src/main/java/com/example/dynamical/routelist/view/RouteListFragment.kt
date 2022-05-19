@@ -11,7 +11,7 @@ import com.example.dynamical.DynamicalApplication
 import com.example.dynamical.data.DatabaseViewModel
 import com.example.dynamical.data.DatabaseViewModelFactory
 import com.example.dynamical.databinding.RouteListFragmentBinding
-import com.example.dynamical.firebase.FirebaseDatabase.Companion.GlobalRoute
+import com.example.dynamical.firebase.GlobalRoute
 import com.example.dynamical.routelist.global.FirebaseRouteAdapter
 import com.example.dynamical.routelist.local.RoomRouteAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions

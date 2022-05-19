@@ -27,9 +27,7 @@ class RouteDetailsActivity : AppCompatActivity() {
     private lateinit var factory: RouteDetailsItemFactory
 
     private lateinit var mapFragment: MapFragment
-
     private lateinit var route: Route
-
     private lateinit var menu: Menu
 
     private val databaseViewModel: DatabaseViewModel by viewModels {
@@ -68,7 +66,10 @@ class RouteDetailsActivity : AppCompatActivity() {
     }
 
     private val progressDialog by lazy {
-        AlertDialog.Builder(this).setView(R.layout.progress_dialog).create()
+        AlertDialog.Builder(this)
+            .setView(R.layout.progress_dialog)
+            .setCancelable(false)
+            .create()
     }
 
     private fun showLoading() {
@@ -88,7 +89,7 @@ class RouteDetailsActivity : AppCompatActivity() {
         else
             menu.findItem(R.id.follow_route).isVisible = false
 
-        if (route.shared)
+        if (route.globalId != null)
             menu.findItem(R.id.share_route).isVisible = false
     }
 
@@ -106,6 +107,10 @@ class RouteDetailsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val route: Route = intent.getParcelableExtra(getString(R.string.EXTRA_ROUTE))!!
+        val isGlobal = intent.getBooleanExtra(
+            getString(R.string.EXTRA_ROUTE_IS_GLOBAL),
+            false
+        )
         setup(route)
     }
 
@@ -154,9 +159,13 @@ class RouteDetailsActivity : AppCompatActivity() {
             R.id.share_route -> {
                 try {
                     showLoading()
-                    FirebaseDatabase.shareRoute(route) {
+                    FirebaseDatabase.shareRoute(route) { globalId, globalRoute ->
                         menu.findItem(R.id.share_route).isVisible = false
-                        route.shared = true
+
+                        route.globalId = globalId
+                        route.owner = globalRoute.owner
+                        route.ownerName = globalRoute.ownerName
+
                         databaseViewModel.insertRoute(route)
                         hideLoading()
                         Toast.makeText(this, R.string.route_shared, Toast.LENGTH_LONG).show()

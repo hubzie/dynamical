@@ -26,11 +26,13 @@ class RouteViewHolder(private val view: View) :
     private val process: ProgressBar = view.findViewById(R.id.progress)
     private val mapView: MapView = view.findViewById(R.id.map_item_preview)
     private val description: LinearLayout = view.findViewById(R.id.item_description)
+
+    private val ownerNameLabel: TextView = view.findViewById(R.id.owner_name_label)
     private val dateLabel: TextView = view.findViewById(R.id.date_label)
 
     private lateinit var map: GoogleMap
-
-    private lateinit var route: Route
+    private var route: Route? = null
+    private var isGlobal = false
 
     init {
         view.clipToOutline = true
@@ -57,9 +59,9 @@ class RouteViewHolder(private val view: View) :
     }
 
     private fun initTrack() {
-        if (!::map.isInitialized || !::route.isInitialized) return
+        if (!::map.isInitialized || route == null) return
 
-        route.track?.let { track ->
+        route!!.track?.let { track ->
             // Draw
             for (part in track)
                 PolylineFactory.createPolyline(map, PolylineType.CURRENT).points = part
@@ -95,9 +97,12 @@ class RouteViewHolder(private val view: View) :
         process.visibility = View.GONE
     }
 
-    fun bind(route: Route) {
+    fun bind(route: Route, isGlobal: Boolean) {
         this.route = route
+        this.isGlobal = isGlobal
 
+        if(isGlobal && route.ownerName != null)
+            ownerNameLabel.text = view.context.getString(R.string.owner_label, route.ownerName)
         dateLabel.text = DateFormat.getDateFormat(view.context.applicationContext)
             .format(route.date)
         addInfo(view.context.getString(R.string.time_label, Tracker.timeToString(route.time)))
@@ -111,7 +116,7 @@ class RouteViewHolder(private val view: View) :
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
         map.mapType = GoogleMap.MAP_TYPE_NORMAL
-        with(map.uiSettings) {
+        map.uiSettings.apply {
             isMapToolbarEnabled = false
             setAllGesturesEnabled(false)
         }
@@ -120,13 +125,18 @@ class RouteViewHolder(private val view: View) :
     }
 
     override fun onClick(view: View) {
-        val intent = Intent(view.context, RouteDetailsActivity::class.java)
-        intent.putExtra(view.context.getString(R.string.EXTRA_ROUTE), route)
-        view.context.startActivity(intent)
+        route?.let { route ->
+            val intent = Intent(view.context, RouteDetailsActivity::class.java)
+            intent.putExtra(view.context.getString(R.string.EXTRA_ROUTE), route)
+            intent.putExtra(view.context.getString(R.string.EXTRA_ROUTE_IS_GLOBAL), isGlobal)
+            view.context.startActivity(intent)
+        }
     }
 
     fun clear() {
         map.clear()
+        route = null
+
         description.removeAllViews()
     }
 }

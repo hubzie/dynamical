@@ -24,12 +24,28 @@
             android:orientation="vertical"
             android:padding="@dimen/margin">
 
-            <TextView
-                android:id="@+id/date_label"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:textSize="@dimen/date_size" />
+                android:orientation="horizontal"
+                tools:ignore="UselessParent">
+
+                <TextView
+                    android:id="@+id/owner_name_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_weight="1"
+                    android:textSize="@dimen/date_size" />
+
+                <TextView
+                    android:id="@+id/date_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:layout_weight="1"
+                    android:textSize="@dimen/date_size" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
