@@ -29,6 +29,8 @@ data class GlobalRoute (
         fun toRoute(route: GlobalRoute, globalId: String): Route {
             return with(route) {
                 Route(
+                    id = -1,
+
                     globalId = globalId,
                     owner = owner,
                     ownerName = ownerName,

@@ -101,6 +101,9 @@ class RouteDetailsActivity : AppCompatActivity() {
             commit()
         }
 
+        supportFragmentManager.executePendingTransactions()
+        mapFragment.fitZoom()
+
         if (isGlobal && route.ownerName != null)
             binding.ownerNameLabel.text = getString(R.string.owner_label, route.ownerName)
         binding.dateLabel.text = DateFormat.getDateFormat(applicationContext)
@@ -190,20 +193,15 @@ class RouteDetailsActivity : AppCompatActivity() {
         try {
             showLoading()
             FirebaseDatabase.unshareRoute(route) {
+                menu.findItem(R.id.share_route).isVisible = true
+                menu.findItem(R.id.unshare_route).isVisible = false
+
+                route.globalId?.let { databaseViewModel.unshare(it) }
+                hideLoading()
+                Toast.makeText(this, R.string.route_unshared_monit, Toast.LENGTH_LONG).show()
+
                 if (isGlobal)
                     finish()
-                else {
-                    menu.findItem(R.id.share_route).isVisible = true
-                    menu.findItem(R.id.unshare_route).isVisible = false
-
-                    route.globalId = null
-                    route.owner = null
-                    route.ownerName = null
-
-                    databaseViewModel.insertRoute(route)
-                    hideLoading()
-                    Toast.makeText(this, R.string.route_unshared_monit, Toast.LENGTH_LONG).show()
-                }
             }
         } catch (e : Exception) {
             val builder = AlertDialog.Builder(this)

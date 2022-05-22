@@ -78,8 +78,9 @@ class MapFragment(private val doTrackPosition: Boolean, private val onReadyCallb
         }
 
         map.mapType = GoogleMap.MAP_TYPE_NORMAL
-        updatePosition()
         onReadyCallback?.invoke()
+        fitZoom()
+        updatePosition()
     }
 
     private fun updatePosition() {
@@ -96,8 +97,6 @@ class MapFragment(private val doTrackPosition: Boolean, private val onReadyCallb
                 .icon(markerIcon)
                 .anchor(0.5f, 0.5f)
         )
-
-        fitZoom()
     }
 
     fun reset() {
