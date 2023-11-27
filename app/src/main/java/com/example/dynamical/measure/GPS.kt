@@ -11,7 +11,8 @@ import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
 
 class GPS(private val application: DynamicalApplication) {
-    private val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(application)
+    private val fusedLocationProviderClient =
+        LocationServices.getFusedLocationProviderClient(application)
     private val _location = MutableLiveData<Location?>()
     val location: LiveData<Location?> = _location
 
@@ -26,11 +27,13 @@ class GPS(private val application: DynamicalApplication) {
     private val locationCallback = GPSLocationCallback()
 
     private fun getRequest(): LocationRequest {
-        return LocationRequest.create().apply {
-            interval = DynamicalApplication.mResources.getInteger(R.integer.GPS_interval).toLong()
-            fastestInterval = DynamicalApplication.mResources.getInteger(R.integer.GPS_fastest_interval).toLong()
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        }
+        val timeInterval =
+            DynamicalApplication.mResources.getInteger(R.integer.GPS_interval).toLong()
+        val minTimeInterval =
+            DynamicalApplication.mResources.getInteger(R.integer.GPS_fastest_interval).toLong()
+        return LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, timeInterval).apply {
+            setMinUpdateIntervalMillis(minTimeInterval)
+        }.build()
     }
 
     fun askForTurningOnGPS(): Task<LocationSettingsResponse> {
@@ -38,7 +41,8 @@ class GPS(private val application: DynamicalApplication) {
             .addLocationRequest(getRequest())
             .build()
 
-        return LocationServices.getSettingsClient(application).checkLocationSettings(settingsRequest)
+        return LocationServices.getSettingsClient(application)
+            .checkLocationSettings(settingsRequest)
     }
 
     @SuppressLint("MissingPermission")

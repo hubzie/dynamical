@@ -11,6 +11,8 @@ interface NewTrackView {
     val lifecycleOwner: LifecycleOwner
 
     val locationPermission: Boolean
+    val notificationPermission: Boolean
+    val activityPermission: Boolean
     fun requestPermission(callback: () -> Unit)
 
     fun setTime(time: String)

@@ -28,8 +28,14 @@ class DynamicalApplication : Application() {
     private inner class ApplicationActivityLifecycleCallback : ActivityLifecycleCallbacks {
         override fun onActivityCreated(activity: Activity, bundle: Bundle?) {}
         override fun onActivityStarted(activity: Activity) {}
-        override fun onActivityResumed(activity: Activity) { currentActivity = activity }
-        override fun onActivityPaused(activity: Activity) { currentActivity = null }
+        override fun onActivityResumed(activity: Activity) {
+            currentActivity = activity
+        }
+
+        override fun onActivityPaused(activity: Activity) {
+            currentActivity = null
+        }
+
         override fun onActivityStopped(activity: Activity) {}
         override fun onActivitySaveInstanceState(activity: Activity, bundle: Bundle) {}
         override fun onActivityDestroyed(activity: Activity) {}
@@ -43,7 +49,12 @@ class DynamicalApplication : Application() {
     val repository by lazy { RouteRepository(database.routeDao()) }
 
     // Storing current route
-    private val sharedPreferences by lazy { getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)!! }
+    private val sharedPreferences by lazy {
+        getSharedPreferences(
+            SHARED_PREFERENCES_NAME,
+            Context.MODE_PRIVATE
+        )!!
+    }
     var followedRoute: Route?
         set(value) {
             sharedPreferences.edit().apply {
@@ -53,8 +64,8 @@ class DynamicalApplication : Application() {
             }
         }
         get() = sharedPreferences.getString(FOLLOWED_ROUTE, null)?.let {
-                Gson().fromJson(it, object : TypeToken<Route>() {}.type) as Route
-            }
+            Gson().fromJson(it, object : TypeToken<Route>() {}.type) as Route
+        }
 
     // Setup
     override fun onCreate() {

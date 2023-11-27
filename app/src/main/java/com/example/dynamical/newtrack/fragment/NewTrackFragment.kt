@@ -3,11 +3,13 @@ package com.example.dynamical.newtrack.fragment
 import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -57,24 +59,45 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
 
     override var locationPermission: Boolean = false
         private set
-    private var requestCallback: (() -> Unit)? = null
+    override var notificationPermission: Boolean = false
+        private set
+    override var activityPermission: Boolean = false
+        private set
+
+    private var requestCallback: ((Boolean) -> Unit)? = null
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-            locationPermission = it
-            requestCallback?.invoke()
+            requestCallback?.invoke(it)
         }
 
-    override fun requestPermission(callback: () -> Unit) {
-        val permission = ContextCompat.checkSelfPermission(
+    private fun getPermission(permission: String, callback: (Boolean) -> Unit) {
+        requestCallback = callback
+        val isPermitted = ContextCompat.checkSelfPermission(
             requireContext(),
-            Manifest.permission.ACCESS_FINE_LOCATION
+            permission
         )
 
-        requestCallback = callback
-        if (permission == PackageManager.PERMISSION_GRANTED) {
-            locationPermission = true
+        if (isPermitted == PackageManager.PERMISSION_GRANTED) {
+            requestCallback?.invoke(true)
+        } else requestPermissionLauncher.launch(permission)
+    }
+
+    override fun requestPermission(callback: () -> Unit) {
+        val requestNotificationPermission: (Boolean) -> Unit = {
+            notificationPermission = it
             callback()
-        } else requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+        val requestActivityPermission: (Boolean) -> Unit = {
+            activityPermission = it
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                getPermission(Manifest.permission.POST_NOTIFICATIONS, requestNotificationPermission)
+        }
+        val requestLocationPermission: (Boolean) -> Unit = {
+            locationPermission = it
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+                getPermission(Manifest.permission.ACTIVITY_RECOGNITION, requestActivityPermission)
+        }
+        getPermission(Manifest.permission.ACCESS_FINE_LOCATION, requestLocationPermission)
     }
 
 

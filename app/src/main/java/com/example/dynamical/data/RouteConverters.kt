@@ -4,7 +4,7 @@ import androidx.room.TypeConverter
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import java.util.*
+import java.util.Date
 
 class RouteConverters {
     @TypeConverter
@@ -14,7 +14,12 @@ class RouteConverters {
 
     @TypeConverter
     fun toTrack(value: String?): List<List<LatLng>>? {
-        return value?.let { Gson().fromJson(value, object : TypeToken<List<List<LatLng>>>() {}.type)}
+        return value?.let {
+            Gson().fromJson(
+                value,
+                object : TypeToken<List<List<LatLng>>>() {}.type
+            )
+        }
     }
 
     @TypeConverter

@@ -11,10 +11,8 @@ class DatabaseViewModel(private val routeRepository: RouteRepository) : ViewMode
     fun insertRoute(route: Route) = viewModelScope.launch {
         routeRepository.insertRoute(route)
     }
+
     fun deleteRoute(route: Route) = viewModelScope.launch {
         routeRepository.deleteRoute(route)
-    }
-    fun unshare(globalId: String) = viewModelScope.launch {
-        routeRepository.unshare(globalId)
     }
 }
