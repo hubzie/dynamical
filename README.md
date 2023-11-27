@@ -8,4 +8,3 @@ To setup application add the following line to local.properties file. This is ne
 ```
 MAPS_API_KEY=<Your Google Maps API key>
 ```
-Also setup Firebase project and add google-services.json file
