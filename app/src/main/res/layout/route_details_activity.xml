@@ -34,7 +34,7 @@
                     android:id="@+id/owner_name_label"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="left"
+                    android:layout_gravity="start"
                     android:layout_weight="1"
                     android:textSize="@dimen/date_size" />
 
@@ -42,8 +42,8 @@
                     android:id="@+id/date_label"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:gravity="right"
                     android:layout_weight="1"
+                    android:gravity="end"
                     android:textSize="@dimen/date_size" />
             </LinearLayout>
         </LinearLayout>

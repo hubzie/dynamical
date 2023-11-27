@@ -11,12 +11,8 @@ import com.example.dynamical.DynamicalApplication
 import com.example.dynamical.data.DatabaseViewModel
 import com.example.dynamical.data.DatabaseViewModelFactory
 import com.example.dynamical.databinding.RouteListFragmentBinding
-import com.example.dynamical.firebase.GlobalRoute
-import com.example.dynamical.routelist.global.FirebaseRouteAdapter
 import com.example.dynamical.routelist.local.RoomRouteAdapter
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.tabs.TabLayout
-import com.google.firebase.firestore.FirebaseFirestore
 
 class RouteListFragment : Fragment() {
     private var _binding: RouteListFragmentBinding? = null
@@ -27,15 +23,6 @@ class RouteListFragment : Fragment() {
     }
 
     private val roomRouteAdapter = RoomRouteAdapter()
-    private val firebaseRouteAdapter: FirebaseRouteAdapter
-
-    init {
-        val query = FirebaseFirestore.getInstance().collection("route_table")
-        val options = FirestoreRecyclerOptions.Builder<GlobalRoute>()
-            .setQuery(query, GlobalRoute::class.java)
-            .build()
-        firebaseRouteAdapter = FirebaseRouteAdapter(options)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,9 +39,9 @@ class RouteListFragment : Fragment() {
         setRoomRouteAdapter()
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
-                if (tab.position == 0) setRoomRouteAdapter()
-                else setFirebaseRouteAdapter()
+                setRoomRouteAdapter()
             }
+
             override fun onTabUnselected(tab: TabLayout.Tab) {}
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
@@ -65,17 +52,9 @@ class RouteListFragment : Fragment() {
     private fun setRoomRouteAdapter() {
         binding.routeListView.adapter = roomRouteAdapter
 
-        firebaseRouteAdapter.stopListening()
         databaseViewModel.allRoutesOnline.observe(viewLifecycleOwner) { data ->
             data?.let { roomRouteAdapter.submitList(data) }
         }
-    }
-
-    private fun setFirebaseRouteAdapter() {
-        binding.routeListView.adapter = firebaseRouteAdapter
-
-        firebaseRouteAdapter.startListening()
-        databaseViewModel.allRoutesOnline.removeObservers(viewLifecycleOwner)
     }
 
     override fun onDestroyView() {

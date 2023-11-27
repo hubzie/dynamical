@@ -56,15 +56,15 @@ class Tracker private constructor(private val application: DynamicalApplication)
     private var previousLocation: Location? = null
 
     private val locationObserver = Observer<Location?> { location ->
-            if (location != null) {
-                val latLng = LatLng(location.latitude, location.longitude)
-                _distance.value =
-                    (_distance.value ?: 0.0f) + (previousLocation?.distanceTo(location) ?: 0.0f)
-                _routePart.value = _routePart.value?.plus(latLng) ?: listOf(latLng)
-            }
-
-            previousLocation = location
+        if (location != null) {
+            val latLng = LatLng(location.latitude, location.longitude)
+            _distance.value =
+                (_distance.value ?: 0.0f) + (previousLocation?.distanceTo(location) ?: 0.0f)
+            _routePart.value = _routePart.value?.plus(latLng) ?: listOf(latLng)
         }
+
+        previousLocation = location
+    }
 
     enum class State {
         STOPPED, RUNNING, PAUSED

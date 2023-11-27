@@ -101,7 +101,7 @@ class RouteViewHolder(private val view: View) :
         this.route = route
         this.isGlobal = isGlobal
 
-        if(isGlobal && route.ownerName != null)
+        if (isGlobal && route.ownerName != null)
             ownerNameLabel.text = view.context.getString(R.string.owner_label, route.ownerName)
         dateLabel.text = DateFormat.getDateFormat(view.context.applicationContext)
             .format(route.date)

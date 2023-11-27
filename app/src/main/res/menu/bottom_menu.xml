@@ -8,8 +8,4 @@
         android:id="@+id/new_track_fragment"
         android:icon="@drawable/add"
         android:title="@string/new_track_title" />
-    <item
-        android:id="@+id/settings_fragment"
-        android:icon="@drawable/settings"
-        android:title="@string/settings_title" />
 </menu>

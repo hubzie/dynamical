@@ -61,13 +61,15 @@ class TrackerService : LifecycleService() {
     private fun changeAction(action: String) {
         notificationBuilder
             .clearActions()
-            .addAction(if(action == ACTION_RESUME) resumeAction else pauseAction)
+            .addAction(if (action == ACTION_RESUME) resumeAction else pauseAction)
     }
 
     private fun updateNotification() {
         val text = getString(R.string.time_label, timeToString(time)) +
-                (stepCount?.let{ "; " + getString(R.string.step_count_label, it.toString()) } ?: "") +
-                (distance?.let{ "; " + getString(R.string.distance_label, distanceToString(it)) } ?: "")
+                (stepCount?.let { "; " + getString(R.string.step_count_label, it.toString()) }
+                    ?: "") +
+                (distance?.let { "; " + getString(R.string.distance_label, distanceToString(it)) }
+                    ?: "")
         val notification = createNotification(text)
         notificationManager.notify(DynamicalApplication.NOTIFICATION_ID, notification)
     }
@@ -116,15 +118,17 @@ class TrackerService : LifecycleService() {
                 val oldTime = this.time
                 this.time = time
                 // If number of seconds changed
-                if(oldTime/1000 != time/1000) updateNotification()
+                if (oldTime / 1000 != time / 1000) updateNotification()
             }
             tracker.stepCount.observe(this) { stepCount -> this.stepCount = stepCount }
             tracker.distance.observe(this) { distance -> this.distance = distance }
             tracker.observableState.observe(this) { state ->
-                changeAction(when (state) {
-                    Tracker.State.RUNNING -> ACTION_PAUSE
-                    else -> ACTION_RESUME
-                })
+                changeAction(
+                    when (state) {
+                        Tracker.State.RUNNING -> ACTION_PAUSE
+                        else -> ACTION_RESUME
+                    }
+                )
                 updateNotification()
             }
 

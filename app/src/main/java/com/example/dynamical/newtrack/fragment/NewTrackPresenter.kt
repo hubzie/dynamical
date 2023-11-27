@@ -29,7 +29,7 @@ class NewTrackPresenter(
         // Some random stuff happens here, so objects are required instead of lambdas
         // https://stackoverflow.com/questions/47025233/android-lifecycle-library-cannot-add-the-same-observer-with-different-lifecycle
         tracker.time.observe(view.lifecycleOwner, object : Observer<Long> {
-            override fun onChanged(time : Long) = view.setTime(Tracker.timeToString(time))
+            override fun onChanged(time: Long) = view.setTime(Tracker.timeToString(time))
         })
         tracker.stepCount.observe(view.lifecycleOwner, object : Observer<Int?> {
             override fun onChanged(stepCount: Int?) {
@@ -58,6 +58,7 @@ class NewTrackPresenter(
                         polyline = view.getNewPolyline(PolylineType.CURRENT)
                         view.onMeasureStart()
                     }
+
                     Tracker.State.PAUSED -> view.onMeasurePause()
                     Tracker.State.STOPPED -> view.onMeasureReset()
                 }

@@ -2,7 +2,6 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/bottom_menu"
     app:startDestination="@id/new_track_fragment">
 
     <fragment
@@ -15,9 +14,4 @@
         android:name="com.example.dynamical.newtrack.fragment.NewTrackFragment"
         android:label="@string/new_track_title"
         tools:layout="@layout/new_track_fragment" />
-    <fragment
-        android:id="@+id/settings_fragment"
-        android:name="com.example.dynamical.settings.SettingsFragment"
-        android:label="@string/settings_title"
-        tools:layout="@layout/settings_fragment" />
 </navigation>

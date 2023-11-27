@@ -14,10 +14,12 @@ interface RouteDao {
     @Delete
     suspend fun deleteRoute(route: Route)
 
-    @Query("update route_table set " +
-            "globalId = null," +
-            "owner = null," +
-            "ownerName = null " +
-            "where globalId = :globalId")
+    @Query(
+        "update route_table set " +
+                "globalId = null," +
+                "owner = null," +
+                "ownerName = null " +
+                "where globalId = :globalId"
+    )
     suspend fun unshare(globalId: String)
 }

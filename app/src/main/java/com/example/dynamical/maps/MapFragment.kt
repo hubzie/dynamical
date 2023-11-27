@@ -14,12 +14,20 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.*
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.Polyline
 
-class MapFragment(private val doTrackPosition: Boolean, private val onReadyCallback: (() -> Unit)?) :
+class MapFragment(
+    private val doTrackPosition: Boolean,
+    private val onReadyCallback: (() -> Unit)?
+) :
     Fragment(R.layout.map_fragment),
-    OnMapReadyCallback
-{
+    OnMapReadyCallback {
     private var _binding: MapFragmentBinding? = null
     private val binding get() = _binding!!
     private lateinit var map: GoogleMap
@@ -63,7 +71,7 @@ class MapFragment(private val doTrackPosition: Boolean, private val onReadyCallb
         map = googleMap
 
         // Configure interactions
-        if(doTrackPosition) {
+        if (doTrackPosition) {
             binding.locationButton.setOnClickListener {
                 followPosition = true
                 updatePosition()
@@ -120,7 +128,8 @@ class MapFragment(private val doTrackPosition: Boolean, private val onReadyCallb
             val padding =
                 (resources.getDimension(R.dimen.map_zoom_padding) / resources.displayMetrics.density).toInt()
             map.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), padding))
-        } catch (e : Exception) {}
+        } catch (_: Exception) {
+        }
     }
 
     fun newPolyline(type: PolylineType): Polyline {

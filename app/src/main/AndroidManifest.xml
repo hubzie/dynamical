@@ -17,6 +17,7 @@
         android:name="android.hardware.location"
         android:required="true" />
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <application
         android:name=".DynamicalApplication"
         android:allowBackup="true"
@@ -37,8 +38,7 @@
             android:name=".newtrack.service.TrackerService"
             android:enabled="true"
             android:exported="false"
-            android:foregroundServiceType="location">
-        </service>
+            android:foregroundServiceType="location"></service>
         <receiver
             android:name=".newtrack.service.TrackerService$Receiver"
             android:exported="false">
@@ -61,24 +61,6 @@
 
         <activity
             android:name=".routelist.view.RouteDetailsActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity" />
-
-        <activity
-            android:name=".settings.auth.SignUpActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity" />
-
-        <activity
-            android:name=".settings.auth.ResetPasswordActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity" />
-
-        <activity
-            android:name=".settings.auth.ModifyUserActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
