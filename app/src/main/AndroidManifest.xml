@@ -36,7 +36,7 @@
             android:name=".newtrack.service.TrackerService"
             android:enabled="true"
             android:exported="false"
-            android:foregroundServiceType="location"/>
+            android:foregroundServiceType="location" />
         <receiver
             android:name=".newtrack.service.TrackerService$Receiver"
             android:exported="false">

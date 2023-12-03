@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -89,12 +88,12 @@ class NewTrackFragment : Fragment(R.layout.new_track_fragment), NewTrackView {
         }
         val requestActivityPermission: (Boolean) -> Unit = {
             activityPermission = it
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
                 getPermission(Manifest.permission.POST_NOTIFICATIONS, requestNotificationPermission)
         }
         val requestLocationPermission: (Boolean) -> Unit = {
             locationPermission = it
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
                 getPermission(Manifest.permission.ACTIVITY_RECOGNITION, requestActivityPermission)
         }
         getPermission(Manifest.permission.ACCESS_FINE_LOCATION, requestLocationPermission)
